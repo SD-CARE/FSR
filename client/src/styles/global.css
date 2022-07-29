@@ -1,0 +1,544 @@
+/* global.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-size: 1.25em;
+}
+body {
+  font-family: "Work Sans", sans-serif;
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  margin-top: 20px;
+}
+p {
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  hyphens: auto;
+}
+a {
+  color: #939;
+  text-decoration: none;
+}
+.wrap {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+header {
+  background: #5e3a98;
+  color: #fff;
+  padding: 1rem 0;
+}
+.header--flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header--logo {
+  font-size: 1.25rem;
+  color: #fff;
+}
+header li {
+  font-size: 0.8rem;
+}
+header nav a {
+  color: #dbd;
+}
+header nav a:hover {
+  color: #fff;
+}
+button {
+  border: none;
+  font-size: 17px;
+}
+
+h3 p {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.header--signedin li {
+  text-align: right;
+  line-height: 1.25;
+}
+.header--signedout li {
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+.carer--module,
+.client-box-item {
+  background: #7c689b;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.client-box-item {
+  padding-bottom: 0;
+  height: 185px;
+}
+
+.carer--label {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 0.25rem;
+}
+.carer--schedule,
+.dateOfCare,
+span.client-schedule {
+  color: rgba(211, 209, 209, 0.6);
+}
+.carer--add--module {
+  background: #ddd9e4;
+  color: #57496e;
+  font-weight: 300;
+  font-size: 1.25rem;
+}
+.carer--add--title .add {
+  width: 20px;
+  height: auto;
+  margin-right: 5px;
+  fill: #57496e;
+}
+.carer--detail--title {
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #888;
+  margin: 3rem 0 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.carer--name {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #47395e;
+}
+.carer--detail--list {
+  font-weight: 300;
+  margin: 0 0 1.5rem 1rem;
+  line-height: 1.5;
+}
+.actions--bar {
+  background: #e9e5f0;
+  padding: 1rem 0;
+  margin: -2rem 0 2rem;
+}
+.validation--errors {
+  background: #e9e5f0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+.validation--errors h3 {
+  color: #800;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.validation--errors ul {
+  font-weight: 300;
+  margin-left: 1rem;
+  line-height: 1.25;
+}
+.validation--errors li {
+  margin-bottom: 0.5rem;
+}
+.validation--errors li:last-child {
+  margin-bottom: 0;
+}
+
+.form--centered {
+  max-width: 510px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+form {
+  margin-bottom: 2.5rem;
+}
+label {
+  display: block;
+  font-weight: 300;
+  margin-bottom: 0.25rem;
+}
+input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  color: #332a40;
+  border-radius: 0.5rem;
+  border: 1px solid #8c789b;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.8rem;
+}
+textarea {
+  min-height: 300px;
+}
+.button {
+  background: #7c689b;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border: 0;
+  margin: 0 0 0.5rem 0;
+  display: block;
+  width: 210px;
+  text-align: center;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.button:last-child {
+  margin-bottom: 0;
+}
+.button:not(.button-secondary):hover {
+  background: #63537d;
+  cursor: pointer;
+}
+.button-secondary {
+  color: #7c689b;
+  background: none;
+  box-shadow: 0 0 0 2px #7c689b inset;
+  transition: box-shadow 0.2s, color 0.2s;
+}
+.button-secondary:hover {
+  color: #63537d;
+  box-shadow: 0 0 0 2px #63537d inset;
+  cursor: pointer;
+}
+input:focus,
+button:focus,
+.button:focus,
+textarea:focus {
+  border: none;
+  border-radius: 0;
+  outline: 2px solid #332a40;
+}
+
+.btn {
+  width: 150px;
+  display: inline-block;
+}
+.btn.button-secondary {
+  margin-left: 20px;
+  height: 23%;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+.search-container {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.datepicker-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.date-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.date-container h3 {
+  display: inline-block;
+  text-align: center;
+  margin: 25px 0;
+}
+
+.date-container form,
+.date-container select {
+  margin-bottom: 0;
+}
+
+.rdrCalendarWrapper {
+  width: 320px;
+  margin-top: 0;
+}
+
+.carerName,
+.carerName-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carerName {
+  border-bottom: 2px solid;
+  padding: 20px;
+}
+
+.carerInitials-name {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.initial {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #5e3a98;
+  border: 2px solid #63537d;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+.carerName-details input {
+  width: 62%;
+  border: none;
+  font-size: 15px;
+  font-weight: 100;
+  background-color: rgba(237, 237, 237, 0.3);
+  color: #000;
+  margin: 0;
+}
+
+.innerForm-wrapper div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+.innerForm-wrapper label {
+  font-size: 13px;
+  font-weight: 100;
+}
+
+#button-collapse {
+  width: 100%;
+  border: none;
+  padding: 20px;
+  background-color: #7c689b;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 100;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+#button-collapse:focus {
+  outline: none;
+}
+
+#button-collapse:hover {
+  background-color: #9a5bff;
+}
+
+table {
+  font-size: 15px;
+}
+
+.call-select {
+  display: flex;
+  justify-content: space-between;
+}
+
+.calls {
+  display: flex;
+  align-items: center;
+  color: #fff;
+}
+
+.calls input,
+.calls label {
+  margin: 5px;
+}
+
+.poc {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.poc select {
+  height: 25px;
+  padding: 2px;
+  margin: 0;
+  margin-left: 10px;
+}
+
+.client-name-schedule {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.client-name-schedule span {
+  color: #fff;
+  background-color: #5e3a98;
+  padding: 15px;
+  border-radius: 0 7px 0 7px;
+  position: absolute;
+  top: -30px;
+  right: -30px;
+}
+
+.dateOfCare td {
+  margin-top: 20px;
+}
+tr.dateOfCare {
+  display: flex;
+  gap: 30px;
+}
+
+.npc {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 15px;
+}
+
+.npc label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.npc input {
+  border: none;
+  margin: 0;
+  font-weight: 600;
+  width: 100px;
+}
+
+.landing {
+  color: #fff;
+}
+
+.performance-metrics-container .landing {
+  background-color: #5e3a98;
+}
+
+.landing--container {
+  margin: 20px;
+}
+
+.view-monthlymetric {
+  color: #fff;
+  text-align: center;
+  margin-top: 20px;
+  font-weight: 600;
+  width: 330px;
+}
+
+h3.noClients {
+  text-align: center;
+  color: #5e3a98;
+  margin-bottom: 20px;
+}
+
+.print-btn {
+  margin: 90px 0;
+}
+
+@media screen and (min-width: 600px) {
+  .header--signedin li {
+    display: inline-block;
+    margin-left: 0.5rem;
+    line-height: 1;
+  }
+
+  h3 p {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .main--grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5rem;
+    grid-auto-rows: 1fr;
+  }
+  .carerName-details div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .innerForm-wrapper div {
+    justify-content: space-around;
+    max-width: 350px;
+  }
+
+  .innerForm-wrapper input {
+    font-size: 15px;
+  }
+
+  .innerForm-wrapper {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #8c789b;
+  }
+
+  .client-carer-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+  }
+  .performance-metrics-container .landing {
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .client-carer-container .landing {
+    width: 230px;
+    text-align: center;
+  }
+
+  h3.noClients {
+    grid-column: 2 / 3;
+  }
+}
+@media screen and (min-width: 800px) {
+  .main--grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .main--flex {
+    display: flex;
+  }
+  .main--flex div:first-child {
+    flex-basis: 62%;
+  }
+  .main--flex div:last-child {
+    margin-left: 8%;
+    flex-basis: 30%;
+  }
+  .course--detail--title {
+    margin: 1.5rem 0 0.5rem;
+  }
+  .button {
+    margin: 0 0.5rem 0 0;
+    display: inline-block;
+  }
+
+  .search-container {
+    width: 500px;
+  }
+}
