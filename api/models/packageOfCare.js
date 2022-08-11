@@ -12,6 +12,7 @@ module.exports = (sequelize) => {
       PackageOfCare: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         validate: {
           notNull: { msg: "Please provide a POC" },
           notEmpty: { msg: "POC must not be empty" },

@@ -1,61 +1,34 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Context } from "../Context";
 
-function ClientBox({ currentCarerSchedule }) {
-  const { currentstartDate, currentendDate, currentCarer, cPData, poc } =
-    useContext(Context);
-  // create exact date string for the appointments
-  const start = currentstartDate.getTimezoneOffset() * 60000; //offset in milliseconds
-  const end = currentendDate.getTimezoneOffset() * 60000; //offset in milliseconds
-  const startISO =
-    new Date(currentstartDate - start).toISOString().split("T")[0] +
-    "T00:00:00.000Z";
-  const endISO =
-    new Date(currentendDate - end).toISOString().split("T")[0] +
-    "T23:59:00.000Z";
-  // get the current carer's appointments for the selected date
-  const [regionsID, setRegionsID] = useState([]);
-  const [clientID, setClientID] = useState([]);
-  useEffect(() => {
-    // Get regions/schedule identifiers
-    if (currentCarer.regions.length > 1) {
-      setRegionsID(
-        currentCarer.regions.map((regions) => `"${regions.identifier}"`)
-      );
-    } else {
-      setRegionsID(`"${currentCarer.regions[0].identifier}"`);
-    }
-  }, [currentCarer.regions]);
+function ClientBox({ regions, carer, currentendDate, currentstartDate }) {
+  const { cPData, poc, sDData } = useContext(Context);
 
-  // Get all clients IDs for the current carer
-  useEffect(() => {
-    // call the "getcarers" method from the data
-    if (regionsID) {
-      cPData
-        .appointments(currentCarer.identifier, startISO, endISO, regionsID)
-        // then set the carers in state with the "res" from the api
-        .then((res) => {
-          setClientID(res.map((appointment) => `"${appointment.client}"`));
-        })
-        // catch any errors returned by the Rest Api
-        .catch((err) => console.log(err));
-    } else {
-      console.log("No regions");
-    }
-  }, [cPData, currentCarer, startISO, endISO, regionsID]);
+  // // Get current carer regions
+  // const [currentCarerRegionID, setCurrentCarerRegionID] = useState([]);
+  // useEffect(() => {
+  //   sDData.getCarerRegion().then((res) => setCurrentCarerRegionID(res));
+  // }, []);
+  // const [currentCarerRegion] = useState([]);
+  // // Get current carer regions by comparing regions and currentCarerRegionID
+  // useEffect(() => {
+  //   if (
+  //     currentCarerRegionID.length >= 1 ||
+  //     currentCarerRegionID !== undefined
+  //   ) {
+  //     regions.filter((reg) => {
+  //       currentCarerRegionID.carer_regions.forEach((cr) => {
+  //         if (cr.regionID === reg.regionID && cr.carerID === carer.carerID) {
+  //           currentCarerRegion.push(reg.CPID);
+  //         }
+  //       });
+  //     });
+  //   }
+  // }, [currentCarerRegion, regions]);
+  // Get CLients for the current carer from cPData
 
   // Get client information using the client ID
   const [clients, setClients] = useState([]);
-
-  // Get client Name
-  useEffect(() => {
-    cPData
-      .getClients(clientID)
-      // Get the clients' Name
-      .then((res) => {
-        setClients(res.map((clients) => clients));
-      });
-  }, [cPData, clientID]);
 
   // Set loading
   // const [loading, setLoading] = useState(true);
@@ -142,8 +115,8 @@ function ClientBox({ currentCarerSchedule }) {
         ))
       ) : (
         <h3 className="noClients">
-          {currentCarer.forename} has no client appointments for the selected
-          date
+          {carer.forename + " " + carer.surname} has no client appointments for
+          the selected date
         </h3>
       )}
     </>

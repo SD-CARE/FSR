@@ -12,6 +12,7 @@ module.exports = (sequelize) => {
       rating: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: true,
         validate: {
           notNull: { msg: "Please provide a valid rating." },
           notEmpty: { msg: "Rating must not be empty." },

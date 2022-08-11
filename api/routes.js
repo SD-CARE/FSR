@@ -6,16 +6,23 @@ const {
   Metric,
   Call,
   Complied,
-  Schedule,
+  Region,
   Client,
   Rating,
   PackageOfCare,
   DateRange,
+  carer_region,
+  carer_clients,
+  metric_complied,
+  metric_comments,
+  metric_rating,
+  client_POC,
+  client_calls,
+  carer_metrics,
 } = require("./models");
 const { asyncHandler } = require("./middleware/asyncHandler");
 const { userAuthentication } = require("./middleware/userAuthentication");
-const user = require("./models/user");
-
+const fs = require("fs");
 // Routes for Authenticated Users
 //Create a User
 router.post(
@@ -56,25 +63,67 @@ router.get(
   })
 );
 
-// Routes for Appointments
+// Route to JSON file
+router.post(
+  "/write",
+  asyncHandler(async (req, res) => {
+    try {
+      const data = fs.readFileSync("../client/src/NPC.json");
+      const json = JSON.parse(data);
+      json.push(req.body);
+      const filtered = json.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(
+            (t) =>
+              t["Employee No"] === item["Employee No"] ||
+              t["Staff Name"] === item["Staff Name"] ||
+              t["Item"] === item["Item"]
+          )
+      );
+      fs.writeFile(
+        "../client/src/NPC.json",
+        JSON.stringify(filtered),
+        (err) => {
+          if (err) throw err;
+          console.log("File created!");
+        }
+      );
+
+      res.status(201).location("/").end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get the NPC JSON file
+router.get(
+  "/write",
+  asyncHandler(async (req, res) => {
+    try {
+      const words = fs.readFileSync("../client/src/NPC.json");
+      const data = JSON.parse(words);
+      res.status(200).json(data);
+    } catch (err) {
+      throw err;
+    }
+  })
+);
 
 // Create a Carer
+
 router.post(
   "/carers",
   asyncHandler(async (req, res) => {
     try {
-      const carer = await Carer.create(req.body);
-      res.status(201).location(`/carers/${carer.carerID}`).end();
+      await Carer.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/carers/`).end();
     } catch (err) {
-      if (
-        err.name === "SequelizeValidationError" ||
-        err.name === "SequelizeUniqueConstraintError"
-      ) {
-        const errors = err.errors.map((er) => er.message);
-        res.status(400).json({ errors });
-      } else {
-        throw err;
-      }
+      throw err;
     }
   })
 );
@@ -103,22 +152,15 @@ router.get(
     try {
       const carers = await Carer.findOne({
         where: {
-          id: req.params.id,
+          carerID: req.params.id,
         },
         attributes: { exclude: ["createdAt", "updatedAt"] },
-        include: [
-          {
-            model: User,
-            as: "User",
-            attributes: ["firstName", "lastName"],
-          },
-        ],
       });
       if (carers) {
         res.status(200).json({ carers });
       } else {
         res.status(404).json({
-          message: "Sorry Appointment not found",
+          message: "Sorry Carer not found",
         });
       }
     } catch (err) {
@@ -127,43 +169,262 @@ router.get(
   })
 );
 
-// Create the calls
+// Create Clients in the database
 router.post(
-  "/calls",
+  "/clients",
   asyncHandler(async (req, res) => {
     try {
-      const call = await Call.bulkCreate([
-        { call: "Breakfast" },
-        { call: "Lunch" },
-        { call: "Tea" },
-        { call: "Dinner" },
-      ]);
-      res.status(201).location(`/calls/${call.callID}`).end();
+      await Client.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/clients/`).end();
     } catch (err) {
-      if (
-        err.name === "SequelizeValidationError" ||
-        err.name === "SequelizeUniqueConstraintError"
-      ) {
-        const errors = err.errors.map((er) => er.message);
-        res.status(400).json({ errors });
-      } else {
-        throw err;
-      }
+      throw err;
     }
   })
 );
 
-// Get the Calls
+// Get all clients from the database
+router.get(
+  "/clients",
+  asyncHandler(async (req, res) => {
+    try {
+      const clients = await Client.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ clients });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// DATES
+router.post(
+  "/dates",
+  asyncHandler(async (req, res) => {
+    try {
+      await DateRange.create(req.body);
+      res.status(201).location(`/dates/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// REGIONS
+router.post(
+  "/regions",
+  asyncHandler(async (req, res) => {
+    try {
+      await Region.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/regions/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all regions from the database
+router.get(
+  "/regions",
+  asyncHandler(async (req, res) => {
+    try {
+      const regions = await Region.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ regions });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// CARER REGIONS
+router.post(
+  "/carer_region",
+  asyncHandler(async (req, res) => {
+    try {
+      await carer_region.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/carer_region/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all carer_regions from the database
+router.get(
+  "/carer_region",
+  asyncHandler(async (req, res) => {
+    try {
+      const carer_regions = await carer_region.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ carer_regions });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// METRICS
+router.post(
+  "/metrics",
+  asyncHandler(async (req, res) => {
+    try {
+      await Metric.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/metrics/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all metrics from the database
+router.get(
+  "/metrics",
+  asyncHandler(async (req, res) => {
+    try {
+      const metrics = await Metric.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ metrics });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// POC
+router.post(
+  "/poc",
+  asyncHandler(async (req, res) => {
+    try {
+      await PackageOfCare.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/poc/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all poc from the database
+router.get(
+  "/poc",
+  asyncHandler(async (req, res) => {
+    try {
+      const poc = await PackageOfCare.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ poc });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// CALLS
+router.post(
+  "/calls",
+  asyncHandler(async (req, res) => {
+    try {
+      await Call.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+
+      res.status(201).location(`/calls/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all calls from the database
 router.get(
   "/calls",
   asyncHandler(async (req, res) => {
     try {
       const calls = await Call.findAll({
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
+        attributes: { exclude: ["createdAt", "updatedAt"] },
       });
       res.status(200).json({ calls });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// RATINGS
+router.post(
+  "/ratings",
+  asyncHandler(async (req, res) => {
+    try {
+      await Rating.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/ratings/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all ratings from the database
+router.get(
+  "/ratings",
+  asyncHandler(async (req, res) => {
+    try {
+      const ratings = await Rating.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ ratings });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// COMPLIED
+router.post(
+  "/complied",
+  asyncHandler(async (req, res) => {
+    try {
+      await Complied.bulkCreate(req.body, {
+        validate: true,
+        ignoreDuplicates: true,
+      });
+      res.status(201).location(`/complied/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all complied from the database
+router.get(
+  "/complied",
+  asyncHandler(async (req, res) => {
+    try {
+      const complied = await Complied.findAll({
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      });
+      res.status(200).json({ complied });
     } catch (err) {
       throw err;
     }

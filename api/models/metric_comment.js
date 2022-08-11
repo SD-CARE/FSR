@@ -1,10 +1,10 @@
 const { Model, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  class carer_schedule extends Model {}
-  carer_schedule.init(
+  class metric_comment extends Model {}
+  metric_comment.init(
     {
-      clientScheduleID: {
+      metricCommentID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -13,5 +13,5 @@ module.exports = (sequelize) => {
     { timestamps: false, sequelize }
   );
 
-  return carer_schedule;
+  return metric_comment;
 };

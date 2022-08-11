@@ -8,9 +8,10 @@ import { Link } from "react-router-dom";
 
 function Clients() {
   // pull in the data from the context api
-  const { setCurrentCarer, setRegionsName, cPData } = useContext(Context);
+  const { setRegionsName, cPData } = useContext(Context);
   const [query, setQuery] = useState("");
 
+  // GET ALL CLIENTS
   const [clients, setclients] = useState([]);
 
   // These are the clients from the careplanner API
@@ -22,7 +23,8 @@ function Clients() {
       .then((res) => setclients(res))
       // catch any errors returned by the Rest Api
       .catch((err) => console.log(err));
-  }, []);
+  }, [cPData]);
+  console.log(clients);
 
   return (
     <>
@@ -36,37 +38,36 @@ function Clients() {
       <div className="wrap main--grid">
         {clients
           .filter(
-            (carer) =>
-              carer.forename.toLowerCase().includes(query) ||
-              carer.surname.toLowerCase().includes(query)
+            (client) =>
+              client.forename.toLowerCase().includes(query) ||
+              client.surname.toLowerCase().includes(query)
           )
-          .map((carer, index) => (
-            <Link
-              to="/clients/1"
-              key={index}
-              className="carer--module course--link"
-              onClick={() => {
-                carer ? setCurrentCarer(carer) : setCurrentCarer(null);
-              }}
-            >
-              <h2 className="carer--label">
-                {carer.forename} {carer.surname}
-              </h2>
-              <h6 className="carer--schedule">
-                Schedules:
-                {carer.regions.length >= 1
-                  ? carer.regions.map((regions) => {
-                      if (regions.name.includes("Schedule")) {
-                        setRegionsName(` ${regions.name.split(" ").pop()}`);
-                        return ` ${regions.name.split(" ").pop()}`;
-                      } else {
-                        setRegionsName(` ${regions.name}`);
-                        return ` ${regions.name}`;
-                      }
-                    })
-                  : null}
-              </h6>
-            </Link>
+          .map((client, index) => (
+            <form>
+              <button key={index} className="carer--module">
+                <h2 className="carer--label">
+                  {client.forename} {client.surname}
+                </h2>
+                <h6 className="carer--schedule">
+                  Schedules:
+                  {client.regions.length >= 1
+                    ? client.regions.map((regions) => {
+                        if (regions.name.includes("Schedule")) {
+                          setRegionsName(` ${regions.name.split(" ").pop()}`);
+                          return ` ${regions.name.split(" ").pop()}`;
+                        } else {
+                          setRegionsName(` ${regions.name}`);
+                          return ` ${regions.name}`;
+                        }
+                      })
+                    : null}
+                </h6>
+                <h6 className="carer--schedule">
+                  Address:
+                  {client.address.address}
+                </h6>
+              </button>
+            </form>
           ))}
         <Link to={`/create`} className="carer--add--module carer--module">
           <span className="carer--add--title">

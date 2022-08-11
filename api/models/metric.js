@@ -12,17 +12,10 @@ module.exports = (sequelize) => {
       performanceMetric: {
         type: DataTypes.TEXT,
         allowNull: false,
+        unique: true,
         validate: {
           notNull: { msg: "Please provide a Performance Metric" },
           notEmpty: { msg: "Please provide a Performance Metric" },
-        },
-        comment: {
-          type: DataTypes.TEXT,
-          allowNull: false,
-          validate: {
-            notNull: { msg: "Please provide a Comment to the Metric" },
-            notEmpty: { msg: "Comment must not be Empty" },
-          },
         },
       },
     },
@@ -52,6 +45,14 @@ module.exports = (sequelize) => {
     Metric.belongsToMany(models.Carer, {
       through: models.carer_metric,
       as: "CarerMetrics",
+      foreignKey: {
+        fieldName: "metricId",
+        allowNull: false,
+      },
+    });
+    Metric.belongsToMany(models.Comment, {
+      through: models.metric_comment,
+      as: "MetricComments",
       foreignKey: {
         fieldName: "metricId",
         allowNull: false,

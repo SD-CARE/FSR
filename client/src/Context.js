@@ -8,7 +8,6 @@ export const Context = React.createContext();
 export const Provider = (props) => {
   // create a userCookies instance in the state and set it to get the cookies
   const [userCookies] = useState(Cookies.get("userCookies"));
-
   const [sDate] = useState(Cookies.get("sDate"));
   const [eDate] = useState(Cookies.get("eDate"));
 
@@ -17,7 +16,7 @@ export const Provider = (props) => {
   const [authenticatedUser, setAuthenticatedUser] = useState(
     userCookies ? JSON.parse(userCookies) : null
   );
-  const [currentCarer, setCurrentCarer] = useState();
+
   const [currentstartDate, setCurrentStartDate] = useState(
     sDate ? JSON.parse(sDate) : null
   );
@@ -44,7 +43,7 @@ export const Provider = (props) => {
         expires: 1,
       });
     }
-  }, [authenticatedUser, currentstartDate, currentendDate, currentCarer]);
+  }, [authenticatedUser, currentstartDate, currentendDate]);
   //   store the Data class component in a constant
   // SDData = local database
   // CPData = careplaer database
@@ -69,73 +68,28 @@ export const Provider = (props) => {
   const signOut = () => {
     // set the authenticated user to null and remove the cookies
     setAuthenticatedUser(null);
-    setCurrentCarer(null);
     setCurrentStartDate(null);
     setCurrentEndDate(null);
     Cookies.remove("userCookies");
     Cookies.remove("sDate");
     Cookies.remove("eDate");
-    Cookies.remove("carer");
+    Cookies.remove("carerCookies");
   };
 
-  // These are the carers saved in the local database
-  // useEffect(() => {
-  //   sDData
-  //     .getCarers()
-  //     .then((res) => setCarers(res.carers))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
-  // Create an arrary of Package Of Care
-  const [poc, setPoc] = useState([]);
-  useEffect(() => {
-    setPoc([
-      "OM",
-      "BD",
-      "TDS",
-      "QDS",
-      "DH-OM",
-      "DH-BD",
-      "DH-TDS",
-      "DH-QDS",
-      "SIT-IN",
-    ]);
-  }, []);
-  const [currentCarerNPC, setCurrentCarerNPC] = useState("");
-
-  const [carers, setCarers] = useState([]);
-
-  // These are the carers from the careplanner API
-  useEffect(() => {
-    // call the "getcarers" method from the data
-    cPData
-      .getAllCarers()
-      // then set the carers in state with the "res" from the api
-      .then((res) => setCarers(res))
-      // catch any errors returned by the Rest Api
-      .catch((err) => console.log(err));
-    // eslint-disable-next-line
-  }, []);
   return (
     <Context.Provider
       value={{
-        currentCarerNPC,
-        setCurrentCarerNPC,
         signIn,
         signOut,
         cPData,
         sDData,
-        carers,
         authenticatedUser,
         setCurrentStartDate,
         currentstartDate,
         setCurrentEndDate,
         currentendDate,
-        setCurrentCarer,
-        currentCarer,
         setRegionsName,
         regionsName,
-        poc,
       }}
     >
       {props.children}

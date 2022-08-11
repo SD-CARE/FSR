@@ -10,7 +10,12 @@ module.exports = (sequelize) => {
         autoIncrement: true,
       },
       compliedNotComplied: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          notEmpty: { msg: "Please select a complied/not complied" },
+        },
       },
     },
     { sequelize }

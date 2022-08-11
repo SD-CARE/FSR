@@ -1,10 +1,10 @@
 const { Model, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  class client_schedule extends Model {}
-  client_schedule.init(
+  class carer_region extends Model {}
+  carer_region.init(
     {
-      clientScheduleID: {
+      clientRegionID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -13,5 +13,5 @@ module.exports = (sequelize) => {
     { timestamps: false, sequelize }
   );
 
-  return client_schedule;
+  return carer_region;
 };

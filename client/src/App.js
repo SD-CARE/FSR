@@ -14,6 +14,7 @@ import ClientList from "./components/ClientList";
 import Evaluate from "./components/Evaluate";
 import PrintMonthly from "./components/Graphs/PrintMonthly";
 import PrintAnnual from "./components/Graphs/PrintAnnual";
+import NewCarerNPC from "./components/NewCarerNPC";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
       <div>
         <Header />
         <Routes>
-          <Route path="/carers/1/date" element={<DatePicker />} />
+          <Route path="/carers/:id/date" element={<DatePicker />} />
           <Route path="/signup" element={<UserSignUp />} />
           <Route path="/signout" element={<UserSignOut />} />
           <Route path="/signin" element={<UserSignIn />} />
@@ -32,7 +33,8 @@ function App() {
           <Route path="/clients" element={<ClientList />} />
           <Route path="/evaluate/:id" element={<Evaluate />} />
           <Route path="/annualmetrics" element={<PrintAnnual />} />
-          <Route path="/carers/1/monthlymetric" element={<PrintMonthly />} />
+          <Route path="/carers/:id/monthlymetric" element={<PrintMonthly />} />
+          <Route path="/carers/NPC/create/:id" element={<NewCarerNPC />} />
         </Routes>
       </div>
     </Router>

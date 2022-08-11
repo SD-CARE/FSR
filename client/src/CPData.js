@@ -68,8 +68,24 @@ export default class CPData {
     }
   }
 
+  // Get a carer by id
+  async getCarer(carer_id) {
+    const response = await this.exAPi(
+      `carers?&filters={"identifiers":[${carer_id}]}`
+    );
+    if (response.status === 200) {
+      if (response.data.length > 0) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   // Get a client by id
-  async getClients(clients_id) {
+  async getClient(clients_id) {
     const response = await this.exAPi(
       `clients?&filters={"identifiers":[${clients_id}]}`
     );
@@ -84,8 +100,17 @@ export default class CPData {
     }
   }
   // get scheduleby id
-  async getSchedule(schedule_id) {
-    const response = await this.exAPi(`schedules/${schedule_id}`);
+  async allRegions() {
+    const response = await this.exAPi(`regions?limit=200`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  async allruns() {
+    const response = await this.exAPi(`appointment-runs?limit=200`);
     if (response.status === 200) {
       return response.data;
     } else {
@@ -94,12 +119,14 @@ export default class CPData {
   }
 
   // Get Apointments by carer
-  async appointments(carerID, startDate, endDate, clientRegions) {
+  async appointments(carer, start, end, clientRegions) {
     const response = await this.exAPi(
-      `carers/${carerID}/appointments?&filters={"start":"${startDate}","end":"${endDate}","clientRegions":[${clientRegions}]}`
+      `carers/${carer}/appointments?&filters={"start":"${start}","end":"${end}","clientRegions":[${clientRegions}]}`
     );
     if (response.status === 200) {
-      return response.data;
+      if (response.data.length > 0) {
+        return response.data;
+      }
     } else {
       throw new Error(`Something went wrong: ${response.status}`);
     }

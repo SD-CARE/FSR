@@ -9,12 +9,14 @@ module.exports = (sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      CPID: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
       forename: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: {
-          msg: "This NPC number has already been assigned",
-        },
         validate: {
           notNull: { msg: "Please enter a forename" },
           notEmpty: { msg: "Forename can not be empty" },
@@ -23,9 +25,6 @@ module.exports = (sequelize) => {
       surname: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: {
-          msg: "This NPC number has already been assigned",
-        },
         validate: {
           notNull: { msg: "Please enter a surname" },
           notEmpty: { msg: "Surname can not be empty" },
@@ -41,9 +40,6 @@ module.exports = (sequelize) => {
         validate: {
           notNull: { msg: "Please enter an NPC number" },
           notEmpty: { msg: "NPC number can not be empty" },
-        },
-        unique: {
-          msg: "This NPC number has already been assigned",
         },
       },
     },
@@ -67,9 +63,9 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     });
-    Carer.belongsToMany(models.Schedule, {
-      through: models.carer_schedule,
-      as: "CarerSchedule",
+    Carer.belongsToMany(models.Region, {
+      through: models.carer_region,
+      as: "CarerRegion",
       foreignKey: {
         fieldName: "carerID",
         allowNull: false,

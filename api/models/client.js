@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      forname: {
+      forename: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -25,16 +25,21 @@ module.exports = (sequelize) => {
           notEmpty: { msg: "Client surname must not be empty" },
         },
       },
+      CPID: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
     },
     { sequelize }
   );
   Client.associate = (models) => {
     // One to many association
-    Client.belongsToMany(models.Schedule, {
-      through: models.client_schedule,
-      as: "ClientSchedule",
+    Client.belongsToMany(models.Region, {
+      through: models.client_region,
+      as: "ClientRegion",
       foreignKey: {
-        fieldName: "scheduleID",
+        fieldName: "regionID",
         allowNull: false,
       },
     });

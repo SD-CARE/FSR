@@ -40,6 +40,33 @@ export default class SDData {
     return fetch(url, options);
   }
 
+  // Create all Clients into the database
+  async createClients(clients) {
+    const response = await this.api("/clients", "POST", clients);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then((data) => {
+        return data.errors;
+      });
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  async createCarers(carers) {
+    const response = await this.api("/carers", "POST", carers);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then((data) => {
+        return data.errors;
+      });
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   //   USER
   // create a getUser async function with emailAddress and password as params
   async getUser(emailAddress, password) {
@@ -105,10 +132,20 @@ export default class SDData {
     }
   }
 
-  // create the  carer in the database
-  async createCarer(carer) {
+  // Get single Carer
+  async getCarer(id) {
+    const response = await this.api(`/carers/${id}`);
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // Create Carer NPC for new carer from JSON file
+  async createCarerNPC(carerNPC) {
     // create the response constant to hold the post requst to the api with requireAuth set to true
-    const response = await this.api("/carers", "POST", carer);
+    const response = await this.api("/write", "POST", carerNPC);
     // if the response status is 200
     if (response.status === 201) {
       //  return an empty array
@@ -126,25 +163,150 @@ export default class SDData {
     }
   }
 
-  // CALLS
-  // create the createAppointment async funtion
-  async createCalls(calls) {
-    // create the response constant to hold the post requst to the api with requireAuth set to true
-    const response = await this.api("/calls", "POST", calls);
-    // if the response status is 200
+  // REGIONS
+  async createRegions(region) {
+    const response = await this.api("/regions", "POST", region);
     if (response.status === 201) {
-      //  return an empty array
       return [];
-      // else if response status is 400
     } else if (response.status === 400) {
-      // return response data in json then
-      return response.json().then((data) => {
-        // return the errors
-        return data.errors;
-      });
-      // else throw the errors from the api
     } else {
       throw new Error(`Something went wrong: ${response.status}`);
     }
   }
+
+  // get regions
+  async getRegions() {
+    const response = await this.api("/regions");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // SET CARER_REGION
+  async setCarerRegion(carerRegion) {
+    const response = await this.api("/carer_region", "POST", carerRegion);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get carer_region
+  async getCarerRegion() {
+    const response = await this.api("/carer_region");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // METRICS
+  async createMetrics(metric) {
+    const response = await this.api("/metrics", "POST", metric);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get metrics
+  async getMetrics() {
+    const response = await this.api("/metrics");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // POC
+  async createPOC(poc) {
+    const response = await this.api("/poc", "POST", poc);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get poc
+  async getPOC() {
+    const response = await this.api("/poc");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // CALLS
+  async createCalls(call) {
+    const response = await this.api("/calls", "POST", call);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get calls
+  async getCalls() {
+    const response = await this.api("/calls");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  //  RATINGS
+  async createRatings(rating) {
+    const response = await this.api("/ratings", "POST", rating);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+  // get ratings
+  async getRatings() {
+    const response = await this.api("/ratings");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // COMPLIED
+  async createComplied(complied) {
+    const response = await this.api("/complied", "POST", complied);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+  // get complied
+  async getComplied() {
+    const response = await this.api("/complied");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // -------End of API functions-------//
 }
