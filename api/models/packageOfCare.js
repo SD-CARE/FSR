@@ -24,8 +24,8 @@ module.exports = (sequelize) => {
   // One to many association
   PackageOfCare.associate = (models) => {
     PackageOfCare.belongsToMany(models.Client, {
-      through: models.client_POC,
-      as: "clientPOc",
+      through: models.client_poc,
+      as: "clientPOC",
       foreignKey: {
         fieldName: "POC_ID",
         allowNull: false,

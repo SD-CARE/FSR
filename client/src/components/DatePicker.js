@@ -51,6 +51,7 @@ function DatePicker() {
           )
       : setRegion("");
   }, [carer]);
+
   // COMPARE THE REGIONS ID IN THE DATABASE WITH THE ONE COMING FROM THE API
 
   // get the regions from the database
@@ -89,7 +90,7 @@ function DatePicker() {
 
   useEffect(() => {
     if (regionObject.length >= 1 && carer !== undefined) {
-      const filter = regionObject.map((reg) => ({ ["regionID"]: reg }));
+      const filter = regionObject.map((reg) => ({ regionID: reg }));
       setCarer_region([
         ...Object.entries(filter).map(([key, value]) => {
           return {
@@ -125,7 +126,6 @@ function DatePicker() {
             <div className="datePicker">
               <DateRange
                 ranges={[selectionRange]}
-                minDate={new Date()}
                 rangeColors={["#5e3a98"]}
                 onChange={handleSelect}
               />
@@ -133,17 +133,17 @@ function DatePicker() {
                 <button
                   type="submit"
                   className="button btn-primary btn"
-                  onClick={() => navigate(`/carers/${id}`)}
+                  onClick={() => navigate(`/carers/${id}/appointment`)}
                 >
                   Continue
                 </button>
-                <Link to="/carers" className="button button-secondary btn">
+                <Link
+                  to={`/carers/${id}/assessed/select`}
+                  className="button button-secondary btn"
+                >
                   Back
                 </Link>
               </div>
-              <button className="carer--module course--link view-monthlymetric">
-                View Performance Metrics
-              </button>
             </div>
           </div>
         </div>

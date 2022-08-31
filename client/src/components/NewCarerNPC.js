@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { Context } from "../Context";
 import NPC from "../NPC.json";
 
@@ -7,6 +7,8 @@ function NewCarerNPC() {
   const { sDData, cPData } = useContext(Context);
   const [currentCarer, setCurrentCarer] = useState({});
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     cPData.getCarer(`"${id}"`).then((data) => setCurrentCarer(data[0]));
   }, []);
@@ -39,7 +41,23 @@ function NewCarerNPC() {
         setError([]);
       }
     });
-    sDData.createCarerNPC(carer);
+    sDData
+      .createCarerNPC(carer)
+      .then(() => {
+        if (location.state?.from) {
+          // navigate back to that location
+          navigate(location.state.from);
+          // else navigate to the root /
+        } else {
+          navigate("/");
+        }
+      })
+      // catch any errors throw by the api and console log them
+      .catch((err) => {
+        console.log(err);
+        // then navigate to /error
+        navigate("/error");
+      });
   };
 
   return currentCarer !== undefined ? (
@@ -58,8 +76,8 @@ function NewCarerNPC() {
         </>
       ) : (
         <>
-          <p className="validation--errors">
-            Fill In these fields Carefully, when created you cannot undo change
+          <p className="validation--errors npc--error--message">
+            Fill In these fields Carefully, Once created you cannot undo change
           </p>
         </>
       )}
@@ -80,7 +98,10 @@ function NewCarerNPC() {
           onChange={change}
           value={carer["Employee No"]}
         />
-        <button type="submit" className=" button button-primary">
+        <button
+          type="submit"
+          className=" button button-primary npc--save--button"
+        >
           Create NPC
         </button>
         <Link to="/carers" className="button button-secondary">

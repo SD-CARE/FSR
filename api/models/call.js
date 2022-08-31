@@ -26,12 +26,20 @@ module.exports = (sequelize) => {
   // One to many association
   Call.associate = (models) => {
     Call.belongsToMany(models.Client, {
-      through: models.client_call,
+      through: {
+        model: models.client_call,
+        unique: false,
+      },
       as: "ClientCall",
       foreignKey: {
         fieldName: "callID",
         allowNull: false,
+        validate: {
+          notEmpty: { msg: "Please enter the respective client calls" },
+          notNull: { msg: "Calls cannot be empty" },
+        },
       },
+      constraints: false,
     });
   };
   return Call;

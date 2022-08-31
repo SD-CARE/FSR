@@ -79,8 +79,6 @@ function Landing() {
           }
         }),
       ]);
-    } else {
-      console.log("No carers");
     }
   };
   useEffect(() => {

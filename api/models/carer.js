@@ -48,12 +48,16 @@ module.exports = (sequelize) => {
   Carer.associate = (models) => {
     // Many to many associations
     Carer.belongsToMany(models.Client, {
-      through: models.carer_client,
+      through: {
+        model: models.carer_client,
+        unique: false,
+      },
       as: "CarerClient",
       foreignKey: {
         fieldName: "carerID",
         allowNull: false,
       },
+      constraints: false,
     });
     Carer.belongsToMany(models.Metric, {
       through: models.carer_metric,
@@ -66,6 +70,14 @@ module.exports = (sequelize) => {
     Carer.belongsToMany(models.Region, {
       through: models.carer_region,
       as: "CarerRegion",
+      foreignKey: {
+        fieldName: "carerID",
+        allowNull: false,
+      },
+    });
+
+    Carer.hasMany(models.client_call, {
+      as: "carerClientCalls",
       foreignKey: {
         fieldName: "carerID",
         allowNull: false,

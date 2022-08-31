@@ -17,16 +17,30 @@ module.exports = (sequelize) => {
           notEmpty: { msg: "Comment secrtion cannot be empty" },
         },
       },
+      startDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
-    { sequelize }
+    { timestamps: false, sequelize }
   );
   Comment.associate = (models) => {
     // One to many association
-    Comment.belongsToMany(models.Metric, {
-      through: models.metric_comment,
-      as: "MetricComments",
+    Comment.belongsTo(models.Metric, {
+      as: "metricComment",
       foreignKey: {
-        fieldName: "commentID",
+        fieldName: "metricID",
+        allowNull: false,
+      },
+    });
+    Comment.belongsTo(models.Carer, {
+      as: "carerMetricComment",
+      foreignKey: {
+        fieldName: "carerID",
         allowNull: false,
       },
     });

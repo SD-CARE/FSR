@@ -9,9 +9,26 @@ module.exports = (sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      startDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
     { timestamps: false, sequelize }
   );
+  metric_rating.associate = (models) => {
+    metric_rating.belongsTo(models.Carer, {
+      as: "carerMetricRating",
+      foreignKey: {
+        fieldName: "carerID",
+        allowNull: false,
+      },
+    });
+  };
 
   return metric_rating;
 };

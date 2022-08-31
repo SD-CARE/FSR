@@ -54,6 +54,26 @@ export default class SDData {
     }
   }
 
+  // Get all Clients
+  async getClients() {
+    const response = await this.api("/clients");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get clients by primary key
+  async getClientByPrimaryKey() {
+    const response = await this.api(`/clients`, "GET");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   async createCarers(carers) {
     const response = await this.api("/carers", "POST", carers);
     if (response.status === 201) {
@@ -205,6 +225,27 @@ export default class SDData {
     }
   }
 
+  // SET CLIENT_REGION
+  async setClientRegion(clientRegion) {
+    const response = await this.api("/client_region", "POST", clientRegion);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get client_region
+  async getClientRegion() {
+    const response = await this.api("/client_region");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   // METRICS
   async createMetrics(metric) {
     const response = await this.api("/metrics", "POST", metric);
@@ -301,6 +342,116 @@ export default class SDData {
   // get complied
   async getComplied() {
     const response = await this.api("/complied");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // create clientCalls
+  async createClientCalls(clientCall) {
+    const response = await this.api("/client_calls", "POST", clientCall);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // create client_poc
+  async createClientPOC(clientpoc) {
+    const response = await this.api("/client_poc", "POST", clientpoc);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get client_poc
+  async getClientPOC() {
+    const response = await this.api("/client_poc");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // create metric_ratings
+  async createMetricRatings(metricRating) {
+    const response = await this.api("/metric_rating", "POST", metricRating);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get metric_ratings
+  async getMetricRatings() {
+    const response = await this.api("/metric_rating");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // create metric_complied
+  async createMetricComplied(metricComplied) {
+    const response = await this.api("/metric_complied", "POST", metricComplied);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get metric_complied
+  async getMetricComplied() {
+    const response = await this.api("/metric_complied");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // COMMENTS
+  async createComments(comments) {
+    const response = await this.api("/comments", "POST", comments);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get comments
+  async getComments() {
+    const response = await this.api("/comments");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // CARER_CLIENT
+  async setCarerClients(carerClient) {
+    const response = await this.api("/carer_client", "POST", carerClient);
+    if (response.status === 201) {
+      return [];
+    } else if (response.status === 400) {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // get carer_client
+  async getCarerClients() {
+    const response = await this.api("/carer_client");
     if (response.status === 200) {
       return response.json().then((data) => data);
     } else {

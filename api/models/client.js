@@ -36,39 +36,65 @@ module.exports = (sequelize) => {
   Client.associate = (models) => {
     // One to many association
     Client.belongsToMany(models.Region, {
-      through: models.client_region,
+      through: {
+        model: models.client_region,
+        unique: false,
+      },
       as: "ClientRegion",
       foreignKey: {
-        fieldName: "regionID",
+        fieldName: "clientID",
         allowNull: false,
+        validate: {
+          notNull: { msg: "Please provide a Client surname" },
+          notEmpty: { msg: "Client surname must not be empty" },
+        },
       },
+      constraints: false,
     });
     // One to many association
     Client.belongsToMany(models.Call, {
-      through: models.client_call,
+      through: {
+        model: models.client_call,
+        unique: false,
+      },
       as: "ClientCall",
       foreignKey: {
         fieldName: "clientID",
         allowNull: false,
+        validate: {
+          notNull: { msg: "Please provide a Client surname" },
+          notEmpty: { msg: "Client surname must not be empty" },
+        },
       },
+      constraints: false,
     });
+
     // One to many association
     Client.belongsToMany(models.PackageOfCare, {
-      through: models.client_POC,
+      through: {
+        model: models.client_poc,
+        unique: false,
+      },
       as: "ClientPOC",
       foreignKey: {
         fieldName: "clientID",
         allowNull: false,
       },
+      constraints: false,
     });
+
     // Many to many
     Client.belongsToMany(models.Carer, {
-      through: models.carer_client,
+      through: {
+        model: models.carer_client,
+        unique: false,
+      },
       as: "CarerClients",
       foreignKey: {
         fieldName: "clientID",
         allowNull: false,
       },
+      constraints: false,
     });
   };
   return Client;

@@ -10,6 +10,7 @@ export const Provider = (props) => {
   const [userCookies] = useState(Cookies.get("userCookies"));
   const [sDate] = useState(Cookies.get("sDate"));
   const [eDate] = useState(Cookies.get("eDate"));
+  const [careDate] = useState(Cookies.get("careDate"));
 
   // create an authenticatedUser instance in state and set it to userCookies if there any
   // else set it to null
@@ -22,6 +23,10 @@ export const Provider = (props) => {
   );
   const [currentendDate, setCurrentEndDate] = useState(
     eDate ? JSON.parse(eDate) : null
+  );
+
+  const [carerDateRange, setCarerDateRange] = useState(
+    careDate ? JSON.parse(careDate) : null
   );
 
   //   when the component mounts
@@ -43,7 +48,12 @@ export const Provider = (props) => {
         expires: 1,
       });
     }
-  }, [authenticatedUser, currentstartDate, currentendDate]);
+    if (carerDateRange) {
+      Cookies.set("careDate", JSON.stringify(carerDateRange), {
+        expires: 1,
+      });
+    }
+  }, [authenticatedUser, currentstartDate, currentendDate, carerDateRange]);
   //   store the Data class component in a constant
   // SDData = local database
   // CPData = careplaer database
@@ -70,12 +80,13 @@ export const Provider = (props) => {
     setAuthenticatedUser(null);
     setCurrentStartDate(null);
     setCurrentEndDate(null);
+    setCarerDateRange(null);
     Cookies.remove("userCookies");
     Cookies.remove("sDate");
     Cookies.remove("eDate");
     Cookies.remove("carerCookies");
+    Cookies.remove("careDate");
   };
-
   return (
     <Context.Provider
       value={{
@@ -83,8 +94,10 @@ export const Provider = (props) => {
         signOut,
         cPData,
         sDData,
+        carerDateRange,
         authenticatedUser,
         setCurrentStartDate,
+        setCarerDateRange,
         currentstartDate,
         setCurrentEndDate,
         currentendDate,

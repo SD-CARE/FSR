@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
         autoIncrement: true,
       },
     },
-    { timestamps: false, sequelize }
+    { sequelize }
   );
 
   return carer_region;

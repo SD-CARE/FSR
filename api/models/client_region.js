@@ -10,8 +10,7 @@ module.exports = (sequelize) => {
         autoIncrement: true,
       },
     },
-    { timestamps: false, sequelize }
+    { sequelize }
   );
-
   return client_region;
 };

@@ -25,36 +25,35 @@ module.exports = (sequelize) => {
   Metric.associate = (models) => {
     // One to many association
     Metric.belongsToMany(models.Complied, {
-      through: models.metric_complied,
+      through: {
+        model: models.metric_complied,
+        unique: false,
+      },
       as: "MetricComplied",
       foreignKey: {
         fieldName: "metricID",
         allowNull: false,
       },
+      constraints: false,
     });
     // One to many association
     Metric.belongsToMany(models.Rating, {
-      through: models.metric_rating,
+      through: {
+        model: models.metric_rating,
+        unique: false,
+      },
       as: "MetricRating",
       foreignKey: {
         fieldName: "metricID",
         allowNull: false,
       },
+      constraints: false,
     });
-    // Many to many
-    Metric.belongsToMany(models.Carer, {
-      through: models.carer_metric,
-      as: "CarerMetrics",
+
+    Metric.hasMany(models.Comment, {
+      as: "matricComment",
       foreignKey: {
-        fieldName: "metricId",
-        allowNull: false,
-      },
-    });
-    Metric.belongsToMany(models.Comment, {
-      through: models.metric_comment,
-      as: "MetricComments",
-      foreignKey: {
-        fieldName: "metricId",
+        fieldName: "metricID",
         allowNull: false,
       },
     });

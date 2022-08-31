@@ -22,12 +22,16 @@ module.exports = (sequelize) => {
   );
   Complied.associate = (models) => {
     Complied.belongsToMany(models.Metric, {
-      through: models.metric_complied,
-      as: "metricComplied",
+      through: {
+        model: models.metric_complied,
+        unique: false,
+      },
+      as: "MetricComplied",
       foreignKey: {
         fieldName: "compliedID",
         allowNull: false,
       },
+      constraints: false,
     });
   };
   return Complied;

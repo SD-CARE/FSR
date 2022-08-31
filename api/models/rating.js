@@ -23,12 +23,16 @@ module.exports = (sequelize) => {
   );
   Rating.associate = (models) => {
     Rating.belongsToMany(models.Metric, {
-      through: models.metric_rating,
-      as: "metricRating",
+      through: {
+        model: models.metric_rating,
+        unique: false,
+      },
+      as: "MetricRating",
       foreignKey: {
         fieldName: "ratingID",
         allowNull: false,
       },
+      constraints: false,
     });
   };
   return Rating;

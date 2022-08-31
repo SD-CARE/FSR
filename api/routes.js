@@ -10,15 +10,15 @@ const {
   Client,
   Rating,
   PackageOfCare,
-  DateRange,
   carer_region,
-  carer_clients,
+  carer_client,
   metric_complied,
-  metric_comments,
+  Comment,
   metric_rating,
-  client_POC,
-  client_calls,
+  client_call,
   carer_metrics,
+  client_region,
+  client_poc,
 } = require("./models");
 const { asyncHandler } = require("./middleware/asyncHandler");
 const { userAuthentication } = require("./middleware/userAuthentication");
@@ -200,13 +200,13 @@ router.get(
   })
 );
 
-// DATES
-router.post(
-  "/dates",
+// get specific clients from the database
+router.get(
+  `/clients`,
   asyncHandler(async (req, res) => {
     try {
-      await DateRange.create(req.body);
-      res.status(201).location(`/dates/`).end();
+      const client = await Client.findAll();
+      res.status(200).json({ client });
     } catch (err) {
       throw err;
     }
@@ -425,6 +425,203 @@ router.get(
         attributes: { exclude: ["createdAt", "updatedAt"] },
       });
       res.status(200).json({ complied });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// CLIENT REGIONS
+router.post(
+  "/client_region",
+  asyncHandler(async (req, res) => {
+    try {
+      await client_region.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/client_region/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all cclientregions from the database
+router.get(
+  "/client_region",
+  asyncHandler(async (req, res) => {
+    try {
+      const client_regions = await client_region.findAll();
+      res.status(200).json({ client_regions });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// CLIENT_CALLS
+router.post(
+  "/client_calls",
+  asyncHandler(async (req, res) => {
+    try {
+      await client_call.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/client_calls/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all client_calls from the database
+router.get(
+  "/client_calls",
+  asyncHandler(async (req, res) => {
+    try {
+      const client_calls = await client_call.findAll();
+      res.status(200).json({ client_calls });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// CLIENT_POC
+router.post(
+  "/client_poc",
+  asyncHandler(async (req, res) => {
+    try {
+      await client_poc.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/client_poc/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all client_poc from the database
+router.get(
+  "/client_poc",
+  asyncHandler(async (req, res) => {
+    try {
+      const client_poc = await client_poc.findAll();
+      res.status(200).json({ client_poc });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// METRIC_RATINGS
+router.post(
+  "/metric_rating",
+  asyncHandler(async (req, res) => {
+    try {
+      await metric_rating.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/metric_rating/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all metric_rating from the database
+router.get(
+  "/metric_rating",
+  asyncHandler(async (req, res) => {
+    try {
+      const metric_rating = await metric_rating.findAll();
+      res.status(200).json({ metric_rating });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// METRIC_COMPLIED
+router.post(
+  "/metric_complied",
+  asyncHandler(async (req, res) => {
+    try {
+      await metric_complied.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/metric_complied/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all metric_complied from the database
+router.get(
+  "/metric_complied",
+  asyncHandler(async (req, res) => {
+    try {
+      const metric_complied = await metric_complied.findAll();
+      res.status(200).json({ metric_complied });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// COMMENTS
+
+router.post(
+  "/comments",
+  asyncHandler(async (req, res) => {
+    try {
+      await Comment.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/comments/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all comments from the database
+router.get(
+  "/comments",
+  asyncHandler(async (req, res) => {
+    try {
+      const comments = await Comment.findAll();
+      res.status(200).json({ comments });
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// CARER_CLIENT
+router.post(
+  "/carer_client",
+  asyncHandler(async (req, res) => {
+    try {
+      await carer_client.bulkCreate(req.body, {
+        validate: true,
+      });
+      res.status(201).location(`/carer_client/`).end();
+    } catch (err) {
+      throw err;
+    }
+  })
+);
+
+// Get all carer_client from the database
+router.get(
+  "/carer_client",
+  asyncHandler(async (req, res) => {
+    try {
+      const carer_clients = await carer_client.findAll();
+      res.status(200).json({ carer_clients });
     } catch (err) {
       throw err;
     }

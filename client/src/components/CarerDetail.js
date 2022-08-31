@@ -65,7 +65,7 @@ function CarerDetail() {
           )
       : // if there is no CPID, set the region to the default region ""
         setRegion("");
-  }, [carer]);
+  }, [carer, cPData]);
 
   // Get all the regions from the database
   const [regions, setRegions] = useState([]);
@@ -86,7 +86,6 @@ function CarerDetail() {
   }, []);
 
   const [currentCarerRegion] = useState([]);
-  const [regObj] = useState([]);
   // Get current carer regions by comparing regions and currentCarerRegionID
   useEffect(() => {
     // If the currentCarerRegionID exists in the database
@@ -103,12 +102,13 @@ function CarerDetail() {
           // if the currentCarerRegionID's carerID matches the the current carer's ID
           if (cr.regionID === reg.regionID && cr.carerID === carer.carerID) {
             // push that region's name and CPID to the currentCarerRegion array and the regObj array respectively
-            console.log([cr]);
+            currentCarerRegion.push(reg.regionName);
           }
         });
       });
     }
-  }, [currentCarerRegionID, regions, regObj]);
+  }, [currentCarerRegionID, regions]);
+
   // create an errors instance in state and set it to an empty array
   const [errors, setErrors] = useState([]);
 
@@ -119,7 +119,9 @@ function CarerDetail() {
     if (currentendDate !== undefined && currentstartDate !== undefined) {
       if (
         new Date(currentstartDate).toISOString().split("T")[0] !==
-        new Date(currentendDate).toISOString().split("T")[0]
+          new Date(currentendDate).toISOString().split("T")[0] ||
+        new Date(currentstartDate).toISOString().split("T")[0] !==
+          new Date().toISOString().split("T")[0]
       ) {
         const start = new Date(currentstartDate);
         start.setDate(start.getDate() + 1);
@@ -147,26 +149,159 @@ function CarerDetail() {
   // Get all clients IDs for the current carer
   useEffect(() => {
     // call the "getcarers" method from the data
-    if (
-      regObj.length > 0 &&
-      carer !== undefined &&
-      startDate !== undefined &&
-      endDate !== undefined
-    ) {
+    if (region.length >= 1) {
       cPData
         .appointments(
           carer.CPID,
           startDate,
           endDate,
-          [...new Set(regObj)].length > 1
-            ? [...new Set(regObj.map((cr) => `"${cr}"`))]
-            : [`"${regObj[0]}"`]
+          region.length === 1
+            ? `"${region[0]}"`
+            : region.map((reg) => `"${reg}"`)
         )
-        .then((res) => setClientID(res))
+        .then((res) =>
+          setClientID(
+            res.length > 1 ? res.map((client) => client.client) : res[0].client
+          )
+        )
         // catch any errors returned by the Rest Api
         .catch((err) => console.log(err));
     }
-  }, [regObj, startDate, endDate, carer]);
+  }, [region]);
+
+  // Get the current carer's clients from the database
+  const [currentCarerClients, setCurrentCarerClients] = useState([]);
+  useEffect(() => {
+    // If the clientID exists in the database
+    if (clientID.length >= 1) {
+      // call the getClients function in the context
+      sDData
+        .getClients()
+        .then((res) => {
+          //  setCurrentCarerClients to an array of the clients that match the clientID
+          setCurrentCarerClients(
+            res.clients.filter((client) => clientID.includes(client.CPID))
+          );
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [clientID]);
+
+  // POST THE CALLS TO THE DATABASE
+  const [postCalls, setPostCalls] = useState({
+    callID: "",
+    clientID: "",
+    startDate: "",
+    endDate: "",
+    carerID: "",
+  });
+  postCalls.startDate = startDate;
+  postCalls.endDate = endDate;
+  postCalls.carerID = carer.carerID;
+  // create the change function
+  const change = (e) => {
+    e.stopPropagation();
+    // create the name and value constants to store events from the inputs
+    const { name, value } = e.target;
+    // set the user to take the data from the inputs as key value pairs
+    // spreading the already exiting contents
+    // save each e.target.value to postCalls
+    if (e.target.checked) {
+      setPostCalls((postCalls) => ({ ...postCalls, [name]: parseInt(value) }));
+      setPostCalls((postCalls) => ({
+        ...postCalls,
+        clientID: parseInt(e.target.id),
+      }));
+    } else {
+      setPostCalls([]);
+    }
+  };
+
+  const [selectedpoc, setSelectedpoc] = useState({
+    clientID: "",
+    POC_ID: "",
+    startDate: "",
+    endDate: "",
+    carerID: "",
+  });
+  selectedpoc.startDate = startDate;
+  selectedpoc.endDate = endDate;
+  selectedpoc.carerID = carer.carerID;
+  const handleSelect = (e) => {
+    e.stopPropagation();
+    const { name, value } = e.target;
+    setSelectedpoc((selectedpoc) => ({
+      ...selectedpoc,
+      [name]: parseInt(value),
+    }));
+    setSelectedpoc((selectedpoc) => ({
+      ...selectedpoc,
+      clientID: parseInt(e.target.id),
+    }));
+  };
+
+  // ccreate arr to push every postCalls checked
+  const [checkedCalls, setCheckedCalls] = useState([]);
+  useEffect(() => {
+    if (postCalls.callID) {
+      setCheckedCalls([...checkedCalls, postCalls]);
+    }
+  }, [postCalls]);
+
+  // create arr to push every selectedpoc
+  // ccreate arr to push every postCalls checked
+  const [pocArr, setPocArr] = useState([]);
+  useEffect(() => {
+    if (selectedpoc.POC_ID) {
+      setPocArr([...pocArr, selectedpoc]);
+    }
+  }, [selectedpoc]);
+
+  // Post the client_calls to the database
+  const submit = (e) => {
+    e.preventDefault();
+    sDData.createClientCalls(
+      checkedCalls.filter(
+        (value, index, self) =>
+          index ===
+          self.findIndex(
+            (t) => t.clientID === value.clientID && t.callID === value.callID
+          )
+      )
+    );
+    sDData
+      .createClientPOC(
+        pocArr.filter(
+          (value, index, self) =>
+            index ===
+            self.findIndex(
+              (t) => t.clientID === value.clientID && t.POC_ID === value.POC_ID
+            )
+        )
+      )
+      //  then if there is any errors
+      .then((errors) => {
+        // set the errors array to display them
+        setErrors(
+          errors.length ||
+            (checkedCalls.length < currentCarerClients.length &&
+              pocArr.length < currentCarerClients.length)
+            ? [
+                "Please select calls for each client",
+                "Please select Package of Care for each client",
+              ]
+            : errors.length || selectedpoc.length < currentCarerClients.length
+            ? ["Please select Package of Care for each client"]
+            : navigate(`/carers/${id}/assess`)
+        );
+      })
+      // catch any errors thrown by the api and log them to the console
+      .catch((err) => {
+        console.log(err);
+        // navigate to the /error
+        navigate("/error");
+      });
+  };
 
   return (
     <>
@@ -183,7 +318,7 @@ function CarerDetail() {
       </div>
       <Collapse isOpened={isButtonCollapseOpen}>
         <div className="carerName-details" id={accessibilityIds.button}>
-          <form className="innerForm-wrapper">
+          <div className="innerForm-wrapper">
             <div>
               <label>Carer Name</label>
               <input value={carerName} readOnly />
@@ -213,45 +348,49 @@ function CarerDetail() {
                 readOnly
               />
             </div>
-          </form>
+          </div>
         </div>
       </Collapse>
-      {errors.length ? (
-        <>
-          <div className="validation--errors">
-            <h3>Validation errors</h3>
-            <ul>
-              {errors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      <div className="wrap main--grid">
-        <ClientBox
-          regions={regions}
-          carer={carer}
-          currentstartDate={currentstartDate}
-          currentendDate={currentendDate}
-        />
-      </div>
 
-      <div className="btn-container">
-        <button
-          type="submit"
-          onClick={() => navigate(`/evaluate/${id}`)}
-          className="button btn-primary btn"
-        >
-          Assess
-        </button>
+      <form onSubmit={submit}>
+        <div className="wrap main--grid">
+          <ClientBox
+            select={handleSelect}
+            change={change}
+            clients={currentCarerClients}
+            carer={carer}
+            startDate={startDate}
+            endDate={endDate}
+          />
+        </div>
+        {errors.length ? (
+          <>
+            <div className="validation--errors">
+              <h3>Validation errors</h3>
+              <ul>
+                {errors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
 
-        <Link to={`/carers/${id}/date`} className="button button-secondary btn">
-          Back
-        </Link>
-      </div>
+        <div className="btn-container">
+          <button type="submit" className="button btn-primary btn">
+            Assess
+          </button>
+
+          <Link
+            to={`/carers/${id}/date`}
+            className="button button-secondary btn"
+          >
+            Back
+          </Link>
+        </div>
+      </form>
     </>
   );
 }

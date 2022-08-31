@@ -10,8 +10,24 @@ module.exports = (sequelize) => {
         autoIncrement: true,
       },
     },
-    { timestamps: false, sequelize }
+    { sequelize }
   );
-
+  carer_metric.associate = (models) => {
+    // carer_metric.belongsTo(models. {
+    //   as: "clientPOC",
+    //   foreignKey: {
+    //     fieldName: "POC_ID",
+    //     allowNull: false,
+    //     validate: {
+    //       notNull: {
+    //         msg: "Please provide a POC_ID",
+    //       },
+    //       notEmpty: {
+    //         msg: "Please provide a POC_ID",
+    //       },
+    //     },
+    //   },
+    // });
+  };
   return carer_metric;
 };

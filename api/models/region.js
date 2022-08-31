@@ -23,12 +23,20 @@ module.exports = (sequelize) => {
   );
   Region.associate = (models) => {
     Region.belongsToMany(models.Client, {
-      through: models.client_region,
+      through: {
+        model: models.client_region,
+        unique: false,
+      },
       as: "ClientRegion",
       foreignKey: {
         fieldName: "regionID",
         allowNull: false,
+        validate: {
+          notNull: { msg: "Please provide a Client surname" },
+          notEmpty: { msg: "Client surname must not be empty" },
+        },
       },
+      constraints: false,
     });
     Region.belongsToMany(models.Carer, {
       through: models.carer_region,
