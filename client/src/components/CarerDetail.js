@@ -44,8 +44,8 @@ function CarerDetail() {
     .split(" ")
     .map((name) => name[0])
     .join("");
-  const [region, setRegion] = useState("");
 
+  const [region, setRegion] = useState("");
   // Get the current carer's region from care planner
   useEffect(() => {
     // If the CPID exists in the database
@@ -65,7 +65,7 @@ function CarerDetail() {
           )
       : // if there is no CPID, set the region to the default region ""
         setRegion("");
-  }, [carer, cPData]);
+  }, [carer]);
 
   // Get all the regions from the database
   const [regions, setRegions] = useState([]);

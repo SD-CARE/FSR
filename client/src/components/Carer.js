@@ -147,12 +147,6 @@ function Carer() {
           className="carer--module course--link view-monthlymetric"
           style={{ cursor: "pointer" }}
         >
-          View all Carer Details
-        </button>
-        <button
-          className="carer--module course--link view-monthlymetric"
-          style={{ cursor: "pointer" }}
-        >
           View Performance Metrics
         </button>
       </div>

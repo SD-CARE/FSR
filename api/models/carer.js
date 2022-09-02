@@ -83,6 +83,22 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     });
+
+    Carer.hasMany(models.metric_rating, {
+      as: "carerMetricRating",
+      foreignKey: {
+        fieldName: "carerID",
+        allowNull: false,
+      },
+    });
+
+    Carer.hasMany(models.metric_complied, {
+      as: "carerMetricComplied",
+      foreignKey: {
+        fieldName: "carerID",
+        allowNull: false,
+      },
+    });
   };
   return Carer;
 };

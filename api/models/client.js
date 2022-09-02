@@ -72,7 +72,7 @@ module.exports = (sequelize) => {
     // One to many association
     Client.belongsToMany(models.PackageOfCare, {
       through: {
-        model: models.client_poc,
+        model: models.client_POC,
         unique: false,
       },
       as: "ClientPOC",

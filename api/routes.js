@@ -16,9 +16,8 @@ const {
   Comment,
   metric_rating,
   client_call,
-  carer_metrics,
   client_region,
-  client_poc,
+  client_POC,
 } = require("./models");
 const { asyncHandler } = require("./middleware/asyncHandler");
 const { userAuthentication } = require("./middleware/userAuthentication");
@@ -492,7 +491,7 @@ router.post(
   "/client_poc",
   asyncHandler(async (req, res) => {
     try {
-      await client_poc.bulkCreate(req.body, {
+      await client_POC.bulkCreate(req.body, {
         validate: true,
       });
       res.status(201).location(`/client_poc/`).end();
@@ -507,7 +506,7 @@ router.get(
   "/client_poc",
   asyncHandler(async (req, res) => {
     try {
-      const client_poc = await client_poc.findAll();
+      const client_poc = await client_POC.findAll();
       res.status(200).json({ client_poc });
     } catch (err) {
       throw err;
@@ -535,8 +534,8 @@ router.get(
   "/metric_rating",
   asyncHandler(async (req, res) => {
     try {
-      const metric_rating = await metric_rating.findAll();
-      res.status(200).json({ metric_rating });
+      const metric = await metric_rating.findAll();
+      res.status(200).json({ metric });
     } catch (err) {
       throw err;
     }
@@ -563,8 +562,8 @@ router.get(
   "/metric_complied",
   asyncHandler(async (req, res) => {
     try {
-      const metric_complied = await metric_complied.findAll();
-      res.status(200).json({ metric_complied });
+      const metric = await metric_complied.findAll();
+      res.status(200).json({ metric });
     } catch (err) {
       throw err;
     }

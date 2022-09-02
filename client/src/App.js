@@ -8,7 +8,6 @@ import UserSignIn from "./components/UserSignIn";
 import CarerList from "./components/CarerList";
 import CarerDetail from "./components/CarerDetail";
 import DatePicker from "./components/DatePicker";
-import CreateCarer from "./components/CreateCarer";
 import Landing from "./components/Landing";
 import ClientList from "./components/ClientList";
 import Evaluate from "./components/Evaluate";
@@ -38,7 +37,6 @@ function App() {
           <Route path="/carers/:id/appointment" element={<PrivateRoute />}>
             <Route index element={<CarerDetail />} />
           </Route>
-          <Route path="/carers/create" element={<CreateCarer />} />
           <Route path="/" element={<Landing />} />
           <Route path="/clients" element={<ClientList />} />
           <Route path="/carers/:id/assess" element={<PrivateRoute />}>

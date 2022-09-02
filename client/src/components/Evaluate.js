@@ -230,7 +230,7 @@ function Evaluate() {
             ? ["Please select a rating for each metric"]
             : errors.length || checkedComplied.length < metrics.length
             ? ["Please select a complied for each metric"]
-            : navigate(`/carers/${id}/assessed`)
+            : navigate(`/carers/${id}/assessed/select`)
         );
       })
 

@@ -74,29 +74,38 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
                 ? region.regionID.map((reg) => ({
                     regionID: reg[0].regionID,
                     clientID: region.clientID,
+                    startDate: startDate,
+                    endDate: endDate,
                   }))
                 : region.regionID[0].regionID,
             clientID: region.clientID,
+            startDate: startDate,
+            endDate: endDate,
           };
         }),
       ]);
     }
   }, [currentClientRegionID]);
   // Create array to hold filtered regionsID
-  let array = [];
-  // If filteredRegions is not empty
-  if (filteredRegions.length > 0) {
-    // Find the regionIDs that are more than one
-    filteredRegions.find((reg) =>
-      // and push them into the array
-      reg.regionID.length > 1 ? array.push(...reg.regionID) : null
-    );
-    // now filter the filteredRegions to remove the regionIDs that are more than one
-    filteredRegions.filter((reg) =>
-      // and push the ones that are not into the array
-      !reg.regionID.length ? array.push(reg) : null
-    );
-  }
+
+  useEffect(() => {
+    let array = [];
+    // If filteredRegions is not empty
+    if (filteredRegions.length > 0) {
+      // Find the regionIDs that are more than one
+      filteredRegions.find((reg) =>
+        // and push them into the array
+        reg.regionID.length > 1 ? array.push(...reg.regionID) : null
+      );
+      // now filter the filteredRegions to remove the regionIDs that are more than one
+      filteredRegions.filter((reg) =>
+        // and push the ones that are not into the array
+        !reg.regionID.length ? array.push(reg) : null
+      );
+    }
+    // Post the filteredRegions to the database
+    sDData.setClientRegion(array);
+  }, [filteredRegions]);
 
   // get all calls from the database
   const [calls, setCalls] = useState([]);
@@ -109,11 +118,6 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
   useEffect(() => {
     sDData.getPOC().then((res) => setPOC(res.poc));
   }, []);
-
-  // Post the filteredRegions to the database
-  useEffect(() => {
-    sDData.setClientRegion(array);
-  }, [array]);
 
   // create array to hold clientIDs, carerIDs, start and end dates
   const [carerClientDates, setCarerClientDates] = useState([]);

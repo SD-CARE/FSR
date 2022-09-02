@@ -24,12 +24,16 @@ module.exports = (sequelize) => {
   // One to many association
   PackageOfCare.associate = (models) => {
     PackageOfCare.belongsToMany(models.Client, {
-      through: models.client_poc,
-      as: "clientPOC",
+      through: {
+        model: models.client_POC,
+        unique: false,
+      },
+      as: "ClientPOC",
       foreignKey: {
         fieldName: "POC_ID",
         allowNull: false,
       },
+      constraints: false,
     });
   };
   return PackageOfCare;

@@ -359,6 +359,16 @@ export default class SDData {
     }
   }
 
+  // get clientCalls
+  async getClientCalls() {
+    const response = await this.api("/client_calls");
+    if (response.status === 200) {
+      return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   // create client_poc
   async createClientPOC(clientpoc) {
     const response = await this.api("/client_poc", "POST", clientpoc);

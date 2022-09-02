@@ -1,8 +1,8 @@
 const { Model, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  class client_poc extends Model {}
-  client_poc.init(
+  class client_POC extends Model {}
+  client_POC.init(
     {
       clientPOCID: {
         type: DataTypes.INTEGER,
@@ -20,8 +20,8 @@ module.exports = (sequelize) => {
     },
     { timestamps: false, sequelize }
   );
-  client_poc.associate = (models) => {
-    client_poc.belongsTo(models.Carer, {
+  client_POC.associate = (models) => {
+    client_POC.belongsTo(models.Carer, {
       as: "carerClientPOC",
       foreignKey: {
         fieldName: "carerID",
@@ -29,5 +29,5 @@ module.exports = (sequelize) => {
       },
     });
   };
-  return client_poc;
+  return client_POC;
 };

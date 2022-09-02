@@ -101,6 +101,7 @@ function DatePicker() {
       ]);
     }
   }, [regionObject]);
+
   useEffect(() => {
     carer_region !== undefined
       ? sDData.setCarerRegion(carer_region)
@@ -128,6 +129,7 @@ function DatePicker() {
                 ranges={[selectionRange]}
                 rangeColors={["#5e3a98"]}
                 onChange={handleSelect}
+                // minDate={new Date()}
               />
               <div className="btn-container">
                 <button
