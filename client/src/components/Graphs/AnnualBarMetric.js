@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,19 +9,8 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Context } from "../../Context";
 
-function AnnualBarMetric() {
-  const [carers, setCarers] = useState([]);
-  const { sDData } = useContext(Context);
-
-  // when the component is mounted
-  useEffect(() => {
-    sDData
-      .getCarers()
-      .then((carer) => setCarers(carer.carers.map((carer) => carer)));
-  }, [sDData]);
-  console.log(carers);
+function AnnualBarMetric({ carers }) {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -39,25 +28,12 @@ function AnnualBarMetric() {
       },
       title: {
         display: true,
-        text: "Overall Carers Performance for 2022",
+        text: "Overall Carers' Performance for 2022",
       },
     },
   };
 
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const labels = ["January"];
 
   let data = {
     labels,

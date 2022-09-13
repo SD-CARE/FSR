@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../Context";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 function Evaluate() {
-  const { sDData, currentstartDate, currentendDate } = useContext(Context);
+  const { sDData, currentstartDate, currentendDate, authenticatedUser } =
+    useContext(Context);
 
   // create exact date string for the appointments
   const [startDate, setStartDate] = useState("");
@@ -74,6 +76,7 @@ function Evaluate() {
     endDate: "",
     ratingID: "",
     carerID: "",
+    userID: authenticatedUser.userID,
   });
   ratingInput.carerID = carer.carerID;
   ratingInput.startDate = startDate;
@@ -106,6 +109,7 @@ function Evaluate() {
     endDate: "",
     compliedID: "",
     carerID: "",
+    userID: authenticatedUser.userID,
   });
   complied.carerID = carer.carerID;
   complied.startDate = startDate;
@@ -165,6 +169,7 @@ function Evaluate() {
             startDate: startDate,
             endDate: endDate,
             carerID: carer.carerID,
+            userID: authenticatedUser.userID,
           };
         }),
       ]);

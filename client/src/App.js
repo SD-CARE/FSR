@@ -20,6 +20,7 @@ import Forbidden from "./components/Forbidden";
 import NotFound from "./components/Notfound";
 import Error from "./components/UnhandledError";
 import Evaluated from "./components/Evaluated";
+import UpdateEvaluate from "./components/UpdateEvaluate";
 function App() {
   return (
     <Router>
@@ -43,13 +44,15 @@ function App() {
             <Route index element={<Evaluate />} />
           </Route>
           <Route path="/annualmetrics" element={<PrintAnnual />} />
-          <Route path="/carers/:id/monthlymetric" element={<PrintMonthly />} />
+          <Route path="/carers/:id/performance" element={<PrintMonthly />} />
           <Route path="/carers/NPC/create/:id" element={<PrivateRoute />}>
             <Route index element={<NewCarerNPC />} />
           </Route>
+          <Route path="/carers/:id/assessed/update" element={<PrivateRoute />}>
+            <Route index element={<UpdateEvaluate />} />
+          </Route>
           <Route path="/error" element={<Error />} />
           <Route path="/forbidden" element={<Forbidden />} />
-          <Route path="/notfound" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/carers/:id/assessed/detail" element={<Evaluated />} />
         </Routes>

@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { MonthlyMetrics } from "./monthlyMetric";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 function PrintMonthly() {
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+  const { id } = useParams();
   return (
     <div>
       <MonthlyMetrics ref={componentRef} />
@@ -14,7 +15,10 @@ function PrintMonthly() {
         <button onClick={handlePrint} className="button btn-primary btn">
           Print
         </button>
-        <Link to="/carers/1/date" className="button button-secondary btn">
+        <Link
+          to={`/carers/${id}/assessed/select`}
+          className="button button-secondary btn"
+        >
           Back
         </Link>
       </div>

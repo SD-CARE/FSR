@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Context } from "../Context";
@@ -7,8 +8,8 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import ReactTooltip from "react-tooltip";
 function Carer() {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate] = useState(new Date());
+  const [endDate] = useState(new Date());
   const { sDData, setCarerDateRange } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -141,14 +142,6 @@ function Carer() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="btn-container">
-        <button
-          className="carer--module course--link view-monthlymetric"
-          style={{ cursor: "pointer" }}
-        >
-          View Performance Metrics
-        </button>
       </div>
     </div>
   ) : (

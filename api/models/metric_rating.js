@@ -28,6 +28,13 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     });
+    metric_rating.belongsTo(models.User, {
+      as: "userMetricRating",
+      foreignKey: {
+        fieldName: "userID",
+        allowNull: false,
+      },
+    });
   };
 
   return metric_rating;

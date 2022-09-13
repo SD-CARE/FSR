@@ -530,11 +530,70 @@ h3.noClients {
   width: 150px;
 }
 
+.metric-container {
+  margin: 0 20px;
+
+  display: flex;
+  flex-direction: column;
+  max-width: 1250px;
+  margin: 0 auto;
+}
+
+.metricRatingComplied-evaluated {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.metricName-evaluated {
+  border-bottom: 2px solid #000;
+  border-top: 2px solid #000;
+  padding: 10px;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+.metricRating-evaluated,
+.metricComplied-evaluated,
+.metricComment-evaluated {
+  border: 1px solid #5e3a98;
+  padding: 15px;
+  width: fit-content;
+  align-self: center;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.metricRating-evaluated span,
+.metricComplied-evaluated span,
+.metricComment-evaluated span {
+  font-weight: 100;
+}
+
+.metricRating-evaluated p,
+.metricComplied-evaluated p,
+.metricComment-evaluated p {
+  margin: 0;
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+.metricComment-evaluated {
+  margin: 0 20px 20px 20px;
+}
+
 @media screen and (min-width: 600px) {
   .header--signedin li {
     display: inline-block;
     margin-left: 0.5rem;
     line-height: 1;
+  }
+
+  .metric-container {
+    border: 2px solid #000;
+    border-top: none;
   }
 
   h3 p {

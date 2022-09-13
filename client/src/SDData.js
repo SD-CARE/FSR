@@ -64,16 +64,6 @@ export default class SDData {
     }
   }
 
-  // get clients by primary key
-  async getClientByPrimaryKey() {
-    const response = await this.api(`/clients`, "GET");
-    if (response.status === 200) {
-      return response.json().then((data) => data);
-    } else {
-      throw new Error(`Something went wrong: ${response.status}`);
-    }
-  }
-
   async createCarers(carers) {
     const response = await this.api("/carers", "POST", carers);
     if (response.status === 201) {

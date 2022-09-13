@@ -26,7 +26,7 @@ function RedirectRoute() {
       .then((res) => (res ? setCourse(res) : navigate("/notfound")))
       //   catch any errors from the api and console log them
       .catch((err) => console.log(err));
-  }, []);
+  }, [data, id, navigate]);
 
   //   when the component mounts
   useEffect(() => {

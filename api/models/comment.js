@@ -44,6 +44,13 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     });
+    Comment.belongsTo(models.User, {
+      as: "userMetricComment",
+      foreignKey: {
+        fieldName: "userID",
+        allowNull: false,
+      },
+    });
   };
   return Comment;
 };

@@ -76,14 +76,27 @@ module.exports = (sequelize) => {
     { sequelize }
   );
   User.associate = (models) => {
-    // One to many
-    // User.hasMany(models.Carer, {
-    //   as: "User",
-    //   foreignKey: {
-    //     fieldName: "userID",
-    //     allowNull: false,
-    //   },
-    // });
+    User.hasMany(models.metric_rating, {
+      as: "userMetric",
+      foreignKey: {
+        fieldName: "userID",
+        allowNull: false,
+      },
+    });
+    User.hasMany(models.metric_complied, {
+      as: "userMetricComplied",
+      foreignKey: {
+        fieldName: "userID",
+        allowNull: false,
+      },
+    });
+    User.hasMany(models.Comment, {
+      as: "userMetricComment",
+      foreignKey: {
+        fieldName: "userID",
+        allowNull: false,
+      },
+    });
   };
   return User;
 };

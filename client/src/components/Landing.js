@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../Context";
@@ -86,13 +88,13 @@ function Landing() {
   }, [carer]);
 
   useEffect(() => {
-    carersWithNPC.length !== undefined
-      ? sDData.createCarers(
-          carersWithNPC.filter((carer) => {
-            return carer !== undefined;
-          })
-        )
-      : console.log("No carers");
+    if (carersWithNPC.length !== undefined) {
+      sDData.createCarers(
+        carersWithNPC.filter((carer) => {
+          return carer !== undefined;
+        })
+      );
+    }
   }, [carersWithNPC]);
 
   // POST ALL CLIENTS
@@ -130,9 +132,9 @@ function Landing() {
     ]);
   }, []);
   useEffect(() => {
-    metrics.length >= 1
-      ? sDData.createMetrics(metrics)
-      : console.log("No metrics");
+    if (metrics.length >= 1) {
+      sDData.createMetrics(metrics);
+    }
   }, [metrics]);
 
   // Create POC
@@ -154,19 +156,19 @@ function Landing() {
   }, []);
 
   useEffect(() => {
-    poc.length >= 1
-      ? setPocObject(
-          Object.entries(poc).map(([key, value]) => {
-            return {
-              PackageOfCare: value,
-            };
-          })
-        )
-      : console.log("No POC");
+    if (poc.length >= 1) {
+      setPocObject(
+        Object.entries(poc).map(([key, value]) => {
+          return {
+            PackageOfCare: value,
+          };
+        })
+      );
+    }
   }, [poc]);
 
   useEffect(() => {
-    pocObject.length >= 1 ? sDData.createPOC(pocObject) : console.log("No POC");
+    if (pocObject.length >= 1) sDData.createPOC(pocObject);
   }, [pocObject]);
 
   // Create calls
@@ -176,21 +178,21 @@ function Landing() {
   }, []);
   const [callsObject, setCallsObject] = useState({});
   useEffect(() => {
-    calls.length >= 1
-      ? setCallsObject(
-          Object.entries(calls).map(([key, value]) => {
-            return {
-              call: value,
-            };
-          })
-        )
-      : console.log("No calls");
+    if (calls.length >= 1) {
+      setCallsObject(
+        Object.entries(calls).map(([key, value]) => {
+          return {
+            call: value,
+          };
+        })
+      );
+    }
   }, [calls]);
 
   useEffect(() => {
-    callsObject.length >= 1
-      ? sDData.createCalls(callsObject)
-      : console.log("No calls");
+    if (callsObject.length >= 1) {
+      sDData.createCalls(callsObject);
+    }
   }, [callsObject]);
 
   // Create Ratings
@@ -200,21 +202,21 @@ function Landing() {
   }, []);
   const [ratingsObject, setRatingsObject] = useState({});
   useEffect(() => {
-    ratings.length >= 1
-      ? setRatingsObject(
-          Object.entries(ratings).map(([key, value]) => {
-            return {
-              rating: value,
-            };
-          })
-        )
-      : console.log("No ratings");
+    if (ratings.length >= 1) {
+      setRatingsObject(
+        Object.entries(ratings).map(([key, value]) => {
+          return {
+            rating: value,
+          };
+        })
+      );
+    }
   }, [ratings]);
 
   useEffect(() => {
-    ratingsObject.length >= 1
-      ? sDData.createRatings(ratingsObject)
-      : console.log("No ratings");
+    if (ratingsObject.length >= 1) {
+      sDData.createRatings(ratingsObject);
+    }
   }, [ratingsObject]);
 
   // Create Complied
@@ -224,21 +226,21 @@ function Landing() {
   }, []);
   const [compliedObject, setCompliedObject] = useState({});
   useEffect(() => {
-    complied.length >= 1
-      ? setCompliedObject(
-          Object.entries(complied).map(([key, value]) => {
-            return {
-              compliedNotComplied: value,
-            };
-          })
-        )
-      : console.log("No complied");
+    if (complied.length >= 1) {
+      setCompliedObject(
+        Object.entries(complied).map(([key, value]) => {
+          return {
+            compliedNotComplied: value,
+          };
+        })
+      );
+    }
   }, [complied]);
 
   useEffect(() => {
-    compliedObject.length >= 1
-      ? sDData.createComplied(compliedObject)
-      : console.log("No complied");
+    if (compliedObject.length >= 1) {
+      sDData.createComplied(compliedObject);
+    }
   }, [compliedObject]);
 
   return (

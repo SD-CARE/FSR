@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 // Retrieve all courses from /api/ carer
 // Each course is a link to / carer/:id
 // Renders a link to "Create carer"
@@ -30,7 +32,6 @@ function Carers() {
       // catch any errors returned by the Rest Api
       .catch((err) => console.log(err));
   }, []);
-  const cpid = carers ? carers.map((carer) => carer.CPID) : [];
 
   useEffect(() => {
     sDData.getCarers();
@@ -86,9 +87,7 @@ function Carers() {
 
   // CREATE ALL REGIONS IN OUR DATABASE
   useEffect(() => {
-    regions.length >= 1
-      ? sDData.createRegions(regions)
-      : console.log("no regions");
+    if (regions.length >= 1) sDData.createRegions(regions);
   }, [regions]);
 
   return (

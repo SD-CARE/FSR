@@ -29,6 +29,13 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     });
+    metric_complied.belongsTo(models.User, {
+      as: "userMetricComplied",
+      foreignKey: {
+        fieldName: "userID",
+        allowNull: false,
+      },
+    });
   };
   return metric_complied;
 };

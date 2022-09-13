@@ -59,14 +59,7 @@ module.exports = (sequelize) => {
       },
       constraints: false,
     });
-    Carer.belongsToMany(models.Metric, {
-      through: models.carer_metric,
-      as: "CarerMetric",
-      foreignKey: {
-        fieldName: "carerID",
-        allowNull: false,
-      },
-    });
+
     Carer.belongsToMany(models.Region, {
       through: models.carer_region,
       as: "CarerRegion",

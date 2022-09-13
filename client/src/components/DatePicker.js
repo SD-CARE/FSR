@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../Context";
 import { DateRange } from "react-date-range";
@@ -57,9 +59,9 @@ function DatePicker() {
   // get the regions from the database
   const [regions, setRegions] = useState([]);
   useEffect(() => {
-    region.length >= 1
-      ? sDData.getRegions().then((res) => setRegions(res.regions))
-      : console.log("no regions");
+    if (region.length >= 1) {
+      sDData.getRegions().then((res) => setRegions(res.regions));
+    }
   }, [region]);
 
   const [currentRegions, setCurrentRegions] = useState([]);
@@ -100,13 +102,11 @@ function DatePicker() {
         }),
       ]);
     }
-  }, [regionObject]);
+  }, [regionObject, carer]);
 
   useEffect(() => {
-    carer_region !== undefined
-      ? sDData.setCarerRegion(carer_region)
-      : console.log("no carer");
-  }, [carer_region]);
+    if (carer_region !== undefined) sDData.setCarerRegion(carer_region);
+  }, [carer_region, sDData]);
 
   return (
     <>

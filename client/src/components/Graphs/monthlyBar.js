@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,11 +9,8 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Context } from "../../Context";
 
-function MonthlyBarMetric() {
-  const { currentCarer } = useContext(Context);
-
+function MonthlyBarMetric({ carer, metrics, fiteredRating, date }) {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -37,25 +34,12 @@ function MonthlyBarMetric() {
       },
       title: {
         display: true,
-        text: `Overall Performance for ${currentCarer.forename} ${currentCarer.surname} 2022`,
+        text: ` Performance for ${carer.forename} ${carer.surname} on ${date}`,
       },
     },
   };
 
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const labels = [...metrics.map((metric) => metric.performanceMetric)];
 
   // give each carer a unique dark color
   const color = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
@@ -66,8 +50,8 @@ function MonthlyBarMetric() {
     labels,
     datasets: [
       {
-        label: `${currentCarer.forename} ${currentCarer.forename[0]}${currentCarer.surname[0]}`,
-        data: labels.map(() => Math.random() * 10),
+        label: `${carer.forename} ${carer.forename}${carer.surname}`,
+        data: fiteredRating,
         borderColor: color,
         backgroundColor: color,
       },

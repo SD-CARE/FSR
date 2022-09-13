@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // Displays a course's details from /api/courses/:id
 // Renders a "Delete Course" button for deleting a course
 // Renders a "Edit Course" button for editing a course
@@ -96,6 +97,7 @@ function CarerDetail() {
       (currentCarerRegionID !== undefined && regions !== undefined)
     ) {
       // filter the regions by the currentCarerRegionID
+      // eslint-disable-next-line array-callback-return
       regions.filter((reg) => {
         // looping over the currentCarerRegionID
         currentCarerRegionID.carer_regions.forEach((cr) => {

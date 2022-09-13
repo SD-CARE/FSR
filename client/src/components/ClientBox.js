@@ -1,10 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../Context";
-import { useNavigate } from "react-router-dom";
 
 function ClientBox({ clients, carer, change, select, startDate, endDate }) {
   const { sDData, cPData } = useContext(Context);
-  const navigate = useNavigate();
   // get all client regions from the database
   const [clientRegions, setClientRegions] = useState([]);
   useEffect(() => {
@@ -17,7 +16,7 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
     cPData.getAllClients().then((res) => setAllClients(res));
   }, []);
 
-  const [carerClients, setCarerClients] = useState({});
+  const [carerClients, setCarerClients] = useState([]);
   useEffect(() => {
     setCarerClients([
       ...Object.entries(clients).map(([key, value]) => {
@@ -38,6 +37,7 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
   const [currentClientRegionID, setCurrentClientRegionID] = useState([]);
   useEffect(() => {
     setCurrentClientRegionID([
+      // eslint-disable-next-line array-callback-return
       ...Object.entries(carerClients).map(([key, value]) => {
         if (value.CPID === value.regions[0].identifier) {
           return {
@@ -142,10 +142,9 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
     // if carerClientDates is not empty
     if (carerClientDates.length > 0) sDData.setCarerClients(carerClientDates);
   }, [carerClientDates]);
-
   return (
     <>
-      {carerClients.length >= 1 ? (
+      {carerClients && carerClients.length >= 1 ? (
         carerClients.map((client, index) => (
           <div key={index} className="client-box-item">
             <div className="client-name-schedule">
@@ -153,7 +152,7 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
                 {client.forename} {client.surname}
               </h2>
               <span className="client--schedule">
-                {client.regions[0].regions.length === 1
+                {client.regions[0].regions.length === 1 && client.regions
                   ? client.regions[0].regions[0].name.includes("Schedule")
                     ? client.regions[0].regions[0].name.split(" ")[1]
                     : client.regions[0].regions[0].name
