@@ -11,7 +11,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
 import { Context } from "../../Context";
 import MonthlyBarMetric from "./monthlyBar";
 import { useParams } from "react-router-dom";
@@ -119,7 +118,7 @@ export const MonthlyMetrics = React.forwardRef((props, ref) => {
           if (rate !== null && rate !== undefined) {
             return rate.map((r) => {
               if (r !== null && r !== undefined) {
-                return r.ratingName[0].rating;
+                return r.ratingName[0].rating ? r.ratingName[0].rating : null;
               }
             });
           }
@@ -129,7 +128,6 @@ export const MonthlyMetrics = React.forwardRef((props, ref) => {
       <></>
     );
   }, [rate]);
-  console.log();
   const fiteredRating = [];
 
   ratingData.length > 0 ? (

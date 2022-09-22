@@ -534,10 +534,43 @@ router.get(
   "/metric_rating",
   asyncHandler(async (req, res) => {
     try {
-      const metric = await metric_rating.findAll();
+      const metric = await metric_rating.findAll({
+        order: [["metricRatingID", "ASC"]],
+      });
       res.status(200).json({ metric });
     } catch (err) {
       throw err;
+    }
+  })
+);
+
+// update metric_rating
+router.put(
+  "/metric_rating",
+  userAuthentication,
+  asyncHandler(async (req, res) => {
+    try {
+      const user = req.currentUser;
+
+      const updatedMeticRating = await metric_rating.bulkCreate(req.body, {
+        validate: true,
+        updateOnDuplicate: ["ratingID"],
+      });
+      res.status(204).json({
+        updatedMeticRating,
+      });
+
+      // Handle errors
+    } catch (err) {
+      if (
+        err.name === "SequelizeValidationError" ||
+        err.name === "SequelizeUniqueConstraintError"
+      ) {
+        const errors = err.errors.map((er) => er.message);
+        res.status(400).json({ errors });
+      } else {
+        throw err;
+      }
     }
   })
 );
@@ -570,6 +603,37 @@ router.get(
   })
 );
 
+// update metric_complied
+router.put(
+  "/metric_complied",
+  userAuthentication,
+  asyncHandler(async (req, res) => {
+    try {
+      const user = req.currentUser;
+
+      const updatedMeticComplied = await metric_complied.bulkCreate(req.body, {
+        validate: true,
+        updateOnDuplicate: ["compliedID"],
+      });
+      res.status(204).json({
+        updatedMeticComplied,
+      });
+
+      // Handle errors
+    } catch (err) {
+      if (
+        err.name === "SequelizeValidationError" ||
+        err.name === "SequelizeUniqueConstraintError"
+      ) {
+        const errors = err.errors.map((er) => er.message);
+        res.status(400).json({ errors });
+      } else {
+        throw err;
+      }
+    }
+  })
+);
+
 // COMMENTS
 
 router.post(
@@ -591,10 +655,43 @@ router.get(
   "/comments",
   asyncHandler(async (req, res) => {
     try {
-      const comments = await Comment.findAll();
+      const comments = await Comment.findAll({
+        order: [["commentID", "ASC"]],
+      });
       res.status(200).json({ comments });
     } catch (err) {
       throw err;
+    }
+  })
+);
+
+// update metric_complied
+router.put(
+  "/comments",
+  userAuthentication,
+  asyncHandler(async (req, res) => {
+    try {
+      const user = req.currentUser;
+
+      const updatedComment = await Comment.bulkCreate(req.body, {
+        validate: true,
+        updateOnDuplicate: ["comment"],
+      });
+      res.status(204).json({
+        updatedComment,
+      });
+
+      // Handle errors
+    } catch (err) {
+      if (
+        err.name === "SequelizeValidationError" ||
+        err.name === "SequelizeUniqueConstraintError"
+      ) {
+        const errors = err.errors.map((er) => er.message);
+        res.status(400).json({ errors });
+      } else {
+        throw err;
+      }
     }
   })
 );

@@ -61,7 +61,7 @@ app.set("port", process.env.PORT || 5000);
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
-  await sequelize.sync({ force: true });
+  await sequelize.sync({ force: false });
 })();
 
 // start listening on our port

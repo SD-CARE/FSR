@@ -10,6 +10,8 @@ function UpdateEvaluate() {
   const { sDData, carerDateRange, authenticatedUser } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
+  // create the errors instence in state and set it to an empty array
+  const [errors, setErrors] = useState([]);
   // GET THE CARER
   const [carer, setCarer] = useState();
   useEffect(() => {
@@ -145,6 +147,7 @@ function UpdateEvaluate() {
                 complyDate !== null && complyDate !== undefined
                   ? complyDate.metricID === metric.metricID
                     ? {
+                        metricCompliedID: complyDate.metricCompliedID,
                         metricRatingID: metric.metricRatingID,
                         userID: metric.userID,
                         metricName: metric.metricName,
@@ -212,6 +215,7 @@ function UpdateEvaluate() {
                 complied !== null && complied !== undefined
                   ? date.metricID === complied.metricID
                     ? {
+                        metricCompliedID: complied.metricCompliedID,
                         metricRatingID: complied.metricRatingID,
                         userID: complied.userID,
                         metricName: complied.metricName,
@@ -238,8 +242,20 @@ function UpdateEvaluate() {
     }
   });
 
-  const [updateRating, setUpdateRating] = useState();
+  const [updateRating, setUpdateRating] = useState({
+    metricRatingID: "",
+    startDate: "",
+    metricID: "",
+    endDate: "",
+    ratingID: "",
+    carerID: "",
+    userID: authenticatedUser.userID,
+  });
+  updateRating.carerID = carer ? carer.carerID : null;
+  updateRating.startDate = carerDateRange.selection.startDate;
+  updateRating.endDate = carerDateRange.selection.endDate;
   const handleSelect = (e) => {
+    console.log(e.target.className);
     e.stopPropagation();
     const { name, value } = e.target;
     setUpdateRating((updateRating) => ({
@@ -248,11 +264,30 @@ function UpdateEvaluate() {
     }));
     setUpdateRating((updateRating) => ({
       ...updateRating,
-      metricID: parseInt(e.target.id),
+      metricRatingID: parseInt(e.target.id),
+      metricID: parseInt(e.target.className),
     }));
   };
 
-  const [updateComplied, setUpdateComplied] = useState();
+  // ccreate arr to push every rating checked
+  const [checkedRating, setCheckedRating] = useState([]);
+  useEffect(() => {
+    if (updateRating.ratingID) {
+      setCheckedRating([...checkedRating, updateRating]);
+    }
+  }, [updateRating]);
+
+  const [updateComplied, setUpdateComplied] = useState({
+    metricCompliedID: "",
+    startDate: "",
+    metricID: "",
+    endDate: "",
+    carerID: "",
+    userID: authenticatedUser.userID,
+  });
+  updateComplied.carerID = carer ? carer.carerID : null;
+  updateComplied.startDate = carerDateRange.selection.startDate;
+  updateComplied.endDate = carerDateRange.selection.endDate;
   const handleSelectComplied = (e) => {
     e.stopPropagation();
     const { name, value } = e.target;
@@ -262,14 +297,24 @@ function UpdateEvaluate() {
     }));
     setUpdateComplied((updateComplied) => ({
       ...updateComplied,
-      metricID: parseInt(e.target.id),
+      metricCompliedID: parseInt(e.target.id),
+      metricID: parseInt(e.target.className),
     }));
   };
-  // COMMENT POST
 
+  // ccreate arr to push every rating checked
+  const [checkedComplied, setCheckedComplied] = useState([]);
+  useEffect(() => {
+    if (updateComplied && updateComplied.compliedID) {
+      setCheckedComplied([...checkedComplied, updateComplied]);
+    }
+  }, [updateComplied]);
+
+  // COMMENT POST
   // Declare a timer
   let timer;
   const [comment, setComment] = useState([]);
+  const [currentMetric, setCurrentMetric] = useState();
   // Create a function to handle the comment post
   const handleComment = (e) => {
     e.preventDefault();
@@ -281,6 +326,7 @@ function UpdateEvaluate() {
         ...comment,
         [name]: value,
       }));
+      setCurrentMetric(parseInt(e.target.id));
     }, 500);
   };
 
@@ -288,24 +334,59 @@ function UpdateEvaluate() {
   const [commentData, setCommentData] = useState([]);
   useEffect(() => {
     // set the comment data to an object
-    // if the comment is not empty
-    if (Object.entries(comment).length !== 0) {
-      setCommentData([
-        ...Object.entries(comment).map(([key, value]) => {
-          // rename all the keys from integers to "comment"
-          return {
-            comment: value,
-            commentID: parseInt(key),
-            startDate: carerDateRange.selection.startDate,
-            endDate: carerDateRange.selection.endDate,
-            carerID: carer.carerID,
-            userID: authenticatedUser.userID,
-          };
-        }),
-      ]);
-    }
+    setCommentData([
+      ...Object.entries(comment).map(([key, value]) => {
+        // rename all the keys from integers to "comment"
+        return {
+          comment: value,
+          commentID: parseInt(key.split(" ")[1]),
+          startDate: carerDateRange.selection.startDate,
+          endDate: carerDateRange.selection.endDate,
+          carerID: carer.carerID,
+          userID: authenticatedUser.userID,
+          metricID: currentMetric,
+        };
+      }),
+    ]);
   }, [comment]);
 
+  const submit = (e) => {
+    e.preventDefault();
+    // wait for the user to finish tying before you can save the comment
+    sDData.updateMetricRating(
+      checkedRating.filter(
+        (value, index, self) =>
+          index ===
+          self.findIndex(
+            (t) => t.carerID === value.carerID && t.metricID === value.metricID
+          )
+      ),
+      authenticatedUser
+    );
+    sDData.updateMetricComplied(
+      checkedComplied.filter(
+        (value, index, self) =>
+          index ===
+          self.findIndex(
+            (t) => t.carerID === value.carerID && t.metricID === value.metricID
+          )
+      ),
+      authenticatedUser
+    );
+    commentData.length > 0
+      ? sDData.updateComments(commentData, authenticatedUser)
+      : console.log("no comment");
+    navigate(`/carers/${id}/assessed/detail`)
+      .then((errors) => {
+        // set the errors array to display them
+        setErrors(errors.length);
+      })
+      .catch((err) => {
+        console.log(err);
+        // navigate to the /error
+        navigate("/error");
+      });
+  };
   return carer ? (
     <>
       <div className="wrapper">
@@ -330,7 +411,7 @@ function UpdateEvaluate() {
           marginBottom: "20px",
         }}
       ></div>
-      <form>
+      <form onSubmit={submit}>
         <div className="metric-container ">
           {currentPerformance !== null && currentPerformance.length > 0 ? (
             currentPerformance.map((metric, index) =>
@@ -346,7 +427,8 @@ function UpdateEvaluate() {
                       <select
                         onChange={handleSelect}
                         name="ratingID"
-                        id={metric.metricID}
+                        id={metric.metricRatingID}
+                        className={metric.metricID}
                       >
                         {ratings.map((rating) => (
                           <option
@@ -367,7 +449,8 @@ function UpdateEvaluate() {
                       <label>Complied/Not Complied:</label>
                       <select
                         name="compliedID"
-                        id={metric.metricID}
+                        id={metric.metricCompliedID}
+                        className={metric.metricID}
                         onChange={handleSelectComplied}
                       >
                         {complaints.map((complaint) => (
@@ -391,7 +474,7 @@ function UpdateEvaluate() {
                   <div style={{ margin: "0 20px" }}>
                     <label>Comment:</label>
                     <textarea
-                      name={metric.commentID}
+                      name={`comment ${metric.commentID}`}
                       onChange={handleComment}
                       id={metric.metricID}
                     >

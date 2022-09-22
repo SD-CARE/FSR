@@ -555,7 +555,7 @@ function Evaluated() {
       currentPerformance.push(comment);
     }
   });
-
+  console.log(currentPerformance);
   // create "isEditing" to hold the boolean value in state
   const [isEditing, setIsEditing] = useState(false);
   // as soon as the app mounts to the DOM
@@ -644,7 +644,7 @@ function Evaluated() {
         </div>
       </div>
       <div className="wrap main--grid">
-        {array.length > 1 ? (
+        {array.length > 0 ? (
           array
             .filter(
               (value, index, self) =>
@@ -748,13 +748,7 @@ function Evaluated() {
         )}
       </div>
       <div>
-        <MetricEvaluated
-          carer={carer}
-          startDate={startDate}
-          sDData={sDData}
-          id={id}
-          currentPerformance={currentPerformance}
-        />
+        <MetricEvaluated currentPerformance={currentPerformance} />
       </div>
     </>
   ) : carer ? (

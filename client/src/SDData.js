@@ -399,6 +399,30 @@ export default class SDData {
     }
   }
 
+  // update the metric_rating
+  async updateMetricRating(metricRating, user) {
+    const { emailAddress, password } = user;
+    const response = await this.api(
+      `/metric_rating`,
+      "PUT",
+      metricRating,
+      true,
+      {
+        emailAddress,
+        password,
+      }
+    );
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then((data) => {
+        return data.errors;
+      });
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   // create metric_complied
   async createMetricComplied(metricComplied) {
     const response = await this.api("/metric_complied", "POST", metricComplied);
@@ -414,6 +438,29 @@ export default class SDData {
     const response = await this.api("/metric_complied");
     if (response.status === 200) {
       return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+  // update the metric_complied
+  async updateMetricComplied(metricComplied, user) {
+    const { emailAddress, password } = user;
+    const response = await this.api(
+      `/metric_complied`,
+      "PUT",
+      metricComplied,
+      true,
+      {
+        emailAddress,
+        password,
+      }
+    );
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then((data) => {
+        return data.errors;
+      });
     } else {
       throw new Error(`Something went wrong: ${response.status}`);
     }
@@ -434,6 +481,24 @@ export default class SDData {
     const response = await this.api("/comments");
     if (response.status === 200) {
       return response.json().then((data) => data);
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
+  // update the metric_complied
+  async updateComments(comment, user) {
+    const { emailAddress, password } = user;
+    const response = await this.api(`/comments`, "PUT", comment, true, {
+      emailAddress,
+      password,
+    });
+    if (response.status === 204) {
+      return [];
+    } else if (response.status === 400) {
+      return response.json().then((data) => {
+        return data.errors;
+      });
     } else {
       throw new Error(`Something went wrong: ${response.status}`);
     }

@@ -112,7 +112,7 @@ function Carer() {
         </Link>
 
         <ReactTooltip place="top" type="dark" effect="solid" />
-        <Link to={`/carers`} className="button button-secondary">
+        <Link to={`/carers`} className="button btn button-secondary">
           Back
         </Link>
       </div>

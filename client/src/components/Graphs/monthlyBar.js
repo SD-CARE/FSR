@@ -57,6 +57,7 @@ function MonthlyBarMetric({ carer, metrics, fiteredRating, date }) {
       },
     ],
   };
+  console.log(data);
   return <Bar options={options} data={data} />;
 }
 

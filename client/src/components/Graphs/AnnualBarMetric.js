@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-function AnnualBarMetric({ carers }) {
+function AnnualBarMetric({ carers, date, rating }) {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -28,30 +28,35 @@ function AnnualBarMetric({ carers }) {
       },
       title: {
         display: true,
-        text: "Overall Carers' Performance for 2022",
       },
     },
   };
 
-  const labels = ["January"];
-
+  const labels = [date];
   let data = {
     labels,
     datasets: [],
   };
+  const color = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
+    Math.random() * 255
+  )}, ${Math.floor(Math.random() * 255)})`;
+
   carers.forEach((carer, i) => {
     // give each carer a unique dark color
-    const color = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
-      Math.random() * 255
-    )}, ${Math.floor(Math.random() * 255)})`;
 
     data.datasets.push({
-      label: carer.forename + " " + carer.initials,
-      data: labels.map(() => Math.random() * 10),
+      label: `${carer.forename} ${carer.initials}`,
+      data:
+        carer.length > 1
+          ? carer.map((care) =>
+              rating.filter((rate) => rate.carerID === care.carerID)
+            )
+          : rating.filter((rate) => rate.carerID === carer.carerID),
       borderColor: color,
       backgroundColor: color,
     });
   });
+
   return <Bar options={options} data={data} />;
 }
 
