@@ -22,7 +22,7 @@ export const AnnualMetrics = React.forwardRef((props, ref) => {
     Legend
   );
   const [carers, setCarers] = useState([]);
-  const { sDData, carerDateRange } = useContext(Context);
+  const { sDData } = useContext(Context);
 
   // when the component is mounted
   useEffect(() => {
@@ -182,13 +182,14 @@ export const AnnualMetrics = React.forwardRef((props, ref) => {
             c.carerID === carer.carerID ? carers.push(c) : null
           )
         );
+
         let ratings = [];
         value.map((rating) =>
-          ratings.push({
-            rating: rating.rating[0].rating ? rating.rating[0].rating : null,
-            carerID: rating.carerID,
-          })
+          rating.rating[0] !== null && rating.rating[0] !== undefined
+            ? ratings.push(rating.rating[0].rating)
+            : null
         );
+
         return {
           rating: ratings,
           carer: carers.filter(
@@ -206,8 +207,8 @@ export const AnnualMetrics = React.forwardRef((props, ref) => {
         };
       }),
     ]);
-  }, [carerRatingsGrouped]);
-  console.log(allTheRatingDates[0]);
+  }, [carerRatingsGrouped, ratings, carers]);
+
   return currcarer !== undefined &&
     currcarer !== null &&
     currcarer.length > 0 ? (

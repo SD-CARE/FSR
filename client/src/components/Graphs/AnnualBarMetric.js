@@ -32,30 +32,61 @@ function AnnualBarMetric({ carers, date, rating }) {
     },
   };
 
-  const labels = [date];
-  let data = {
-    labels,
-    datasets: [],
-  };
   const color = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(
     Math.random() * 255
   )}, ${Math.floor(Math.random() * 255)})`;
 
-  carers.forEach((carer, i) => {
-    // give each carer a unique dark color
+  const labels = [new Date(date)];
+  let data = {
+    labels,
+    datasets: [],
+  };
 
-    data.datasets.push({
-      label: `${carer.forename} ${carer.initials}`,
-      data:
-        carer.length > 1
-          ? carer.map((care) =>
-              rating.filter((rate) => rate.carerID === care.carerID)
-            )
-          : rating.filter((rate) => rate.carerID === carer.carerID),
-      borderColor: color,
-      backgroundColor: color,
-    });
+  let filteredRating = [];
+  let manyCarersRating = [];
+  let maxValue = 12;
+  // console.log(delta);
+  if (rating !== null && rating !== undefined && rating.length > maxValue) {
+    while (rating.length) {
+      manyCarersRating.push(rating.splice(0, maxValue));
+    }
+  } else if (
+    rating !== null &&
+    rating !== undefined &&
+    rating.length <= maxValue
+  ) {
+    filteredRating.push(
+      Math.floor(rating.reduce((acc, arr) => acc + arr) / 12)
+    );
+  }
+  // const manyCarersRatingNoDuplicates = [...new Set(manyCarersRating)];
+  let reducedRate = [];
+  manyCarersRating.map((rate) => {
+    rate !== undefined && rate !== null
+      ? reducedRate.push(
+          Math.floor(rate.reduce((acc, val) => acc + val) / maxValue)
+        )
+      : (reducedRate = []);
   });
+
+  carers.length > 1
+    ? carers.map((carer, i) => {
+        // give each carer a unique dark color
+        // reduce the rating and / the sum by 12
+
+        data.datasets.push({
+          label: `${carer.forename} ${carer.initials}`,
+          data: [reducedRate[i]],
+          borderColor: [color],
+          backgroundColor: [color],
+        });
+      })
+    : data.datasets.push({
+        label: `${carers[0].forename} ${carers[0].initials}`,
+        data: filteredRating,
+        borderColor: color,
+        backgroundColor: color,
+      });
 
   return <Bar options={options} data={data} />;
 }
