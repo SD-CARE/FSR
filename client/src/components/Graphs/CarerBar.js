@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-function MonthlyBarMetric({ carer, metrics, fiteredRating, date }) {
+function CarerBarMetric({ carer, metrics, fiteredRating, date }) {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -50,15 +50,15 @@ function MonthlyBarMetric({ carer, metrics, fiteredRating, date }) {
     labels,
     datasets: [
       {
-        label: `${carer.forename} ${carer.forename}${carer.surname}`,
+        label: `${carer.forename} ${carer.initials}`,
         data: fiteredRating,
         borderColor: color,
         backgroundColor: color,
       },
     ],
   };
-  console.log(data);
+
   return <Bar options={options} data={data} />;
 }
 
-export default MonthlyBarMetric;
+export default CarerBarMetric;

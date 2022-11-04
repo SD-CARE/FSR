@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
+import { useReactToPrint } from "react-to-print";
 import UserSignUp from "./components/UserSignUp";
 import Header from "./components/Header";
 import UserSignOut from "./components/UserSignOut";
@@ -11,17 +11,22 @@ import DatePicker from "./components/DatePicker";
 import Landing from "./components/Landing";
 import ClientList from "./components/ClientList";
 import Evaluate from "./components/Evaluate";
-import PrintMonthly from "./components/Graphs/PrintMonthly";
-import PrintAnnual from "./components/Graphs/PrintAnnual";
+import PrintCarer from "./components/Graphs/PrintCarer";
+import PrintDaily from "./components/Graphs/PrintDaily";
 import NewCarerNPC from "./components/NewCarerNPC";
 import PrivateRoute from "./components/PrivateRoute";
 import Carer from "./components/Carer";
 import Forbidden from "./components/Forbidden";
 import NotFound from "./components/Notfound";
 import Error from "./components/UnhandledError";
-import Evaluated from "./components/Evaluated";
+import { Evaluated } from "./components/Evaluated";
 import UpdateEvaluate from "./components/UpdateEvaluate";
+import MonthlyPrint from "./components/Graphs/MonthlyPrint";
 function App() {
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   return (
     <Router>
       <div>
@@ -43,18 +48,23 @@ function App() {
           <Route path="/carers/:id/assess" element={<PrivateRoute />}>
             <Route index element={<Evaluate />} />
           </Route>
-          <Route path="/annualmetrics" element={<PrintAnnual />} />
-          <Route path="/carers/:id/performance" element={<PrintMonthly />} />
-          <Route path="/carers/NPC/create/:id" element={<PrivateRoute />}>
+          <Route path="/dailymetrics" element={<PrintDaily />} />
+          <Route path="/monthlymetrics" element={<MonthlyPrint />} />
+          <Route path="/carers/:id/performance" element={<PrintCarer />} />
+          <Route path="/write/:id" element={<PrivateRoute />}>
             <Route index element={<NewCarerNPC />} />
           </Route>
+
           <Route path="/carers/:id/assessed/update" element={<PrivateRoute />}>
             <Route index element={<UpdateEvaluate />} />
           </Route>
           <Route path="/error" element={<Error />} />
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="*" element={<NotFound />} />
-          <Route path="/carers/:id/assessed/detail" element={<Evaluated />} />
+          <Route
+            path="/carers/:id/assessed/detail"
+            element={<Evaluated ref={componentRef} handlePrint={handlePrint} />}
+          />
         </Routes>
       </div>
     </Router>

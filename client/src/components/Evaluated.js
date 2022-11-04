@@ -4,7 +4,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../Context";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import MetricEvaluated from "./MetricEvaluated";
-function Evaluated() {
+import { ComponentToPrint } from "./ComponentToPrint";
+export const Evaluated = React.forwardRef((props, ref) => {
   const { sDData, carerDateRange, authenticatedUser } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -330,11 +331,31 @@ function Evaluated() {
   let arrPOC = [];
   poc.concat.apply([], poc).map((clientPOC) => {
     arrPOC.push(...clientPOC);
+    // filter out the null values
+    arrPOC = arrPOC.filter((item) => item !== null);
+    // filter out the duplicates
+    arrPOC = arrPOC.filter(
+      (thing, index, self) =>
+        index ===
+        self.findIndex(
+          (t) => t.POC_ID === thing.POC_ID && t.clientID === thing.clientID
+        )
+    );
   });
 
   let arrx = [];
   call.concat.apply([], call).map((clientCall) => {
     arrx.push(...clientCall);
+    // filter out the null values
+    arrx = arrx.filter((x) => x !== null);
+    // filter out the duplicates
+    arrx = arrx.filter(
+      (thing, index, self) =>
+        index ===
+        self.findIndex(
+          (t) => t.callID === thing.callID && t.clientID === thing.clientID
+        )
+    );
   });
 
   let array = [];
@@ -383,7 +404,7 @@ function Evaluated() {
   // get all the client_calls that match the start date
   const [ratingDate, setRatingDate] = useState([]);
   useEffect(() => {
-    carerRating !== undefined && carerRating !== null && carerRating
+    carerRating !== undefined && carerRating !== null && carerRating !== []
       ? setRatingDate(
           carerRating.map((poc) =>
             poc.startDate.split("T")[0] === startDate ? poc : null
@@ -395,12 +416,19 @@ function Evaluated() {
   // add the POC from packageOfCare and add it to the clientPOCFilter
   const [rate, setRate] = useState([]);
   useEffect(() => {
-    ratingDate.length > 0 && metrics
+    ratingDate.length > 0 &&
+    metrics &&
+    ratingDate !== null &&
+    metrics !== null &&
+    ratingDate !== undefined &&
+    metrics !== undefined
       ? setRate(
           ratingDate.map((rateDate) => {
-            if (rateDate !== null) {
+            if (rateDate !== null && rateDate !== undefined) {
               return metrics.map((metric) =>
-                rateDate.metricID === metric.metricNameID
+                rateDate.metricID === metric.metricNameID &&
+                rateDate.ratingID !== null &&
+                rateDate.ratingID !== undefined
                   ? {
                       userID: rateDate.userID,
                       metricName: metric.performanceMetric,
@@ -417,8 +445,7 @@ function Evaluated() {
           })
         )
       : setRate([]);
-  }, [ratingDate, metrics]);
-
+  }, [ratingDate, metrics, ratings]);
   // get all the compliedMetric
   const [compliedMetric, setCompliedMetric] = useState([]);
   useEffect(() => {
@@ -553,9 +580,19 @@ function Evaluated() {
   comments.concat.apply([], comments).map((comment) => {
     if (comment !== null) {
       currentPerformance.push(comment);
+      // filter out duplicates
+      currentPerformance = currentPerformance.filter(
+        (thing, index, self) =>
+          index ===
+          self.findIndex((t) => {
+            if (t !== undefined) {
+              return t.metricID === thing.metricID;
+            }
+          })
+      );
     }
   });
-  console.log(currentPerformance);
+
   // create "isEditing" to hold the boolean value in state
   const [isEditing, setIsEditing] = useState(false);
   // as soon as the app mounts to the DOM
@@ -578,7 +615,7 @@ function Evaluated() {
   const updateCarer = () => navigate(`/carers/${id}/assessed/update`);
 
   return carer && currentClients.length > 0 ? (
-    <>
+    <div>
       <div className="wrapper">
         <div className="carerName">
           <div className="carerInitials-name">
@@ -624,6 +661,23 @@ function Evaluated() {
           ) : (
             <></>
           )}
+          {currentPerformance === null ||
+          currentPerformance === undefined ||
+          currentPerformance.length === 0 ||
+          currentPerformance === [] ? (
+            <button
+              className="button button-primary"
+              style={{
+                cursor: "pointer",
+                maxHeight: "50px",
+              }}
+              onClick={() => navigate(`/carers/${id}/assess`)}
+            >
+              Assess Carer
+            </button>
+          ) : (
+            <></>
+          )}
           <button
             onClick={() => navigate(`/carers/${id}/performance`)}
             className="button button-primary"
@@ -633,6 +687,12 @@ function Evaluated() {
             }}
           >
             View Charts
+          </button>
+          <button
+            onClick={props.handlePrint}
+            className="button btn-primary btn"
+          >
+            Print
           </button>
           <Link
             to={`/carers/${id}/assessed/select`}
@@ -750,7 +810,20 @@ function Evaluated() {
       <div>
         <MetricEvaluated currentPerformance={currentPerformance} />
       </div>
-    </>
+      {/* FOR PRINT FORMAT ONLY */}
+      <div style={{ display: "none" }}>
+        <ComponentToPrint
+          ref={ref}
+          carer={carer}
+          startDate={startDate}
+          arrx={arrx}
+          array={array}
+          arrPOC={arrPOC}
+          currentPerformance={currentPerformance}
+        />
+      </div>
+      {/* END OF PRINT FORMAT */}
+    </div>
   ) : carer ? (
     <div>
       <h2 style={{ textAlign: "center", fontSize: "20px", fontWeight: "bold" }}>
@@ -769,6 +842,4 @@ function Evaluated() {
   ) : (
     <></>
   );
-}
-
-export default Evaluated;
+});

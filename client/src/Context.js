@@ -87,6 +87,13 @@ export const Provider = (props) => {
     Cookies.remove("carerCookies");
     Cookies.remove("careDate");
   };
+
+  // NPC Data
+  const [NPC, setNPC] = useState([]);
+  useEffect(() => {
+    sDData.getCarerNPC().then((res) => setNPC(res));
+  }, []);
+
   return (
     <Context.Provider
       value={{
@@ -103,6 +110,7 @@ export const Provider = (props) => {
         currentendDate,
         setRegionsName,
         regionsName,
+        NPC,
       }}
     >
       {props.children}

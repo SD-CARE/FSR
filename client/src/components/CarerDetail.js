@@ -147,6 +147,7 @@ function CarerDetail() {
   }, [currentendDate, currentstartDate]);
 
   // Get the current carer's clients
+  const [clients, setClients] = useState([]);
   const [clientID, setClientID] = useState([]);
   // Get all clients IDs for the current carer
   useEffect(() => {
@@ -161,15 +162,28 @@ function CarerDetail() {
             ? `"${region[0]}"`
             : region.map((reg) => `"${reg}"`)
         )
-        .then((res) =>
+        .then((res) => {
           setClientID(
             res.length > 1 ? res.map((client) => client.client) : res[0].client
-          )
-        )
+          );
+        })
         // catch any errors returned by the Rest Api
         .catch((err) => console.log(err));
     }
   }, [region]);
+  // compare the clientID with the clients from cpData
+  const [filterOutDisabledClients, setFilterOutDisabledClients] = useState([]);
+  useEffect(() => {
+    cPData.getAllClients().then((res) => setClients(res));
+  }, []);
+
+  useEffect(() => {
+    if (clientID.length >= 1 && clients.length >= 1) {
+      setFilterOutDisabledClients(
+        clients.filter((client) => clientID.includes(client.identifier))
+      );
+    }
+  }, [clientID, clients]);
 
   // Get the current carer's clients from the database
   const [currentCarerClients, setCurrentCarerClients] = useState([]);
@@ -189,7 +203,25 @@ function CarerDetail() {
     }
   }, [clientID]);
 
+  const [filteredClients, setFilteredClients] = useState([]);
+  useEffect(() => {
+    if (filterOutDisabledClients.length >= 1) {
+      setFilteredClients(
+        //  compare the currentCarerClients with the filterOutDisabledClients and return the currentCarerClients that match the filterOutDisabledClients
+        currentCarerClients.filter((client) =>
+          filterOutDisabledClients.some(
+            (filteredClient) => filteredClient.identifier === client.CPID
+          )
+        )
+      );
+    }
+  }, [currentCarerClients, filterOutDisabledClients]);
+
   // POST THE CALLS TO THE DATABASE
+  const [unchecked, setUnchecked] = useState({
+    callID: "",
+    clientID: "",
+  });
   const [postCalls, setPostCalls] = useState({
     callID: "",
     clientID: "",
@@ -215,7 +247,10 @@ function CarerDetail() {
         clientID: parseInt(e.target.id),
       }));
     } else {
-      setPostCalls([]);
+      setUnchecked({
+        callID: parseInt(value),
+        clientID: parseInt(e.target.id),
+      });
     }
   };
 
@@ -250,6 +285,37 @@ function CarerDetail() {
     }
   }, [postCalls]);
 
+  // unchecked calls array to push every unchecked call
+  const [uncheckedCalls, setUncheckedCalls] = useState([]);
+  useEffect(() => {
+    if (unchecked.callID) {
+      setUncheckedCalls([...uncheckedCalls, unchecked]);
+    }
+  }, [unchecked]);
+
+  const [filterCalls, setFilterCalls] = useState();
+  useEffect(() => {
+    // filter the outPutCall to remove the unchecked calls
+    if (uncheckedCalls) {
+      //  filter the checkedCalls to remove the unchecked calls from the array
+      setFilterCalls(
+        checkedCalls.filter((call) => {
+          return !uncheckedCalls.some((unchecked) => {
+            return (
+              unchecked.callID === call.callID &&
+              unchecked.clientID === call.clientID
+            );
+          });
+        })
+      );
+    }
+  }, [checkedCalls, uncheckedCalls]);
+  useEffect(() => {
+    if (filterCalls) {
+      setUncheckedCalls([]);
+    }
+  }, []);
+
   // create arr to push every selectedpoc
   // ccreate arr to push every postCalls checked
   const [pocArr, setPocArr] = useState([]);
@@ -259,50 +325,188 @@ function CarerDetail() {
     }
   }, [selectedpoc]);
 
-  // Post the client_calls to the database
+  // get the last pocID incase the user changes the poc
+  const lastPoc = pocArr.reduce((acc, cur, i) => {
+    acc[cur.clientID] = { i: cur };
+    return acc;
+  }, {});
+
+  const outPutPoc = Object.values(lastPoc)
+    .sort((a, b) => a.i - b.i)
+    .map(({ i: val }) => val);
+
+  //  get the last callID incase the user changes the call
+  let outPutCall = [];
+  if (filterCalls) {
+    const lastCall = filterCalls.reduce((acc, cur, i) => {
+      acc[cur.clientID] = { i: cur };
+      return acc;
+    }, {});
+
+    outPutCall = Object.values(lastCall)
+      .sort((a, b) => a.i - b.i)
+      .map(({ i: val }) => val);
+  }
+
+  const [clientRegions, setClientRegions] = useState([]);
+  useEffect(() => {
+    sDData.getRegions().then((res) => setClientRegions(res.regions));
+  }, []);
+
+  // set the carer's clients
+  const [carerClients, setCarerClients] = useState([]);
+  useEffect(() => {
+    setCarerClients([
+      ...Object.entries(filteredClients).map(([key, value]) => {
+        return {
+          id: value.clientID,
+          CPID: value.CPID,
+          forename: value.forename,
+          surname: value.surname,
+          regions: clients.filter((client) => {
+            return client.identifier === value.CPID;
+          }),
+        };
+      }),
+    ]);
+  }, [clients, filteredClients]);
+
+  // set the current clients's regionIDs
+  const [currentClientRegionID, setCurrentClientRegionID] = useState([]);
+  useEffect(() => {
+    setCurrentClientRegionID([
+      ...Object.entries(carerClients).map(([key, value]) => {
+        // check if value.regions[0].identifier is undefine
+
+        if (value.CPID === value.regions[0].identifier && value.regions[0]) {
+          return {
+            regionID:
+              // if value.regions[0].regions.length > 1
+              value.regions[0].regions.length > 1
+                ? value.regions[0].regions.map((reg) =>
+                    clientRegions.filter((re) => reg.identifier === re.CPID)
+                  )
+                : // otherwise return the regionID of the first region
+                  clientRegions.filter((region) =>
+                    value.regions[0].regions[0].identifier === region.CPID
+                      ? region
+                      : null
+                  ),
+            clientID: value.id,
+          };
+        }
+      }),
+    ]);
+  }, [carerClients]);
+
+  const [filteredRegions, setFilteredRegions] = useState([]);
+  // Clean up the currentClientRegionID make it ready for the database
+  useEffect(() => {
+    // make sure the currentClientRegionID is not empty
+    if (currentClientRegionID.length >= 1) {
+      // create a new object for each regionID
+      setFilteredRegions([
+        ...currentClientRegionID.map((region) => {
+          return {
+            regionID:
+              region.regionID.length > 1
+                ? region.regionID.map((reg) => ({
+                    regionID: reg[0].regionID,
+                    clientID: region.clientID,
+                    startDate: startDate,
+                    endDate: endDate,
+                  }))
+                : region.regionID[0].regionID,
+            clientID: region.clientID,
+            startDate: startDate,
+            endDate: endDate,
+          };
+        }),
+      ]);
+    }
+  }, [currentClientRegionID]);
+  // Create array to hold filtered regionsID
+
+  useEffect(() => {
+    let array = [];
+    // If filteredRegions is not empty
+    if (filteredRegions.length > 0) {
+      // Find the regionIDs that are more than one
+      filteredRegions.find((reg) =>
+        // and push them into the array
+        reg.regionID.length > 1 ? array.push(...reg.regionID) : null
+      );
+      // now filter the filteredRegions to remove the regionIDs that are more than one
+      filteredRegions.filter((reg) =>
+        // and push the ones that are not into the array
+        !reg.regionID.length ? array.push(reg) : null
+      );
+    }
+    // Post the filteredRegions to the database
+    sDData.setClientRegion(array);
+  }, [filteredRegions]);
+
+  // get all calls from the database
+  const [calls, setCalls] = useState([]);
+  useEffect(() => {
+    sDData.getCalls().then((res) => setCalls(res.calls));
+  }, []);
+
+  // get all poc from the database
+  const [poc, setPOC] = useState([]);
+  useEffect(() => {
+    sDData.getPOC().then((res) => setPOC(res.poc));
+  }, []);
+
+  // create array to hold clientIDs, carerIDs, start and end dates
+  const [carerClientDates, setCarerClientDates] = useState([]);
+  useEffect(() => {
+    // if carerClients is not empty
+    if (carerClients.length > 0) {
+      setCarerClientDates(
+        Object.entries(carerClients).map(([key, value]) => {
+          return {
+            clientID: value.id,
+            carerID: carer.carerID,
+            startDate: startDate,
+            endDate: endDate,
+          };
+        })
+      );
+    }
+  }, [carerClients]);
+
   const submit = (e) => {
     e.preventDefault();
-    sDData.createClientCalls(
-      checkedCalls.filter(
-        (value, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.clientID === value.clientID && t.callID === value.callID
-          )
-      )
-    );
-    sDData
-      .createClientPOC(
-        pocArr.filter(
-          (value, index, self) =>
-            index ===
-            self.findIndex(
-              (t) => t.clientID === value.clientID && t.POC_ID === value.POC_ID
-            )
-        )
-      )
-      //  then if there is any errors
-      .then((errors) => {
-        // set the errors array to display them
-        setErrors(
-          errors.length ||
-            (checkedCalls.length < currentCarerClients.length &&
-              pocArr.length < currentCarerClients.length)
-            ? [
-                "Please select calls for each client",
-                "Please select Package of Care for each client",
-              ]
-            : errors.length || selectedpoc.length < currentCarerClients.length
-            ? ["Please select Package of Care for each client"]
-            : navigate(`/carers/${id}/assess`)
-        );
-      })
-      // catch any errors thrown by the api and log them to the console
-      .catch((err) => {
-        console.log(err);
-        // navigate to the /error
-        navigate("/error");
-      });
+    if (
+      carerClientDates.length > 0 &&
+      outPutPoc.length === currentCarerClients.length &&
+      outPutCall.length >= currentCarerClients.length
+    ) {
+      // post the calls to the database
+      sDData.createClientCalls(outPutCall);
+      // post the POC to the database
+      sDData.createClientPOC(outPutPoc);
+      sDData
+        .setCarerClients(carerClientDates)
+        //  then if there is any errors
+        .then((errors) => {
+          // set the errors array to display them
+          setErrors(errors.length);
+        })
+        .then(() => navigate(`/carers/${id}/assess`))
+        // catch any errors thrown by the api and log them to the console
+        .catch((err) => {
+          console.log(err);
+          // navigate to the /error
+          navigate("/error");
+        });
+    } else {
+      setErrors([
+        "Please select calls for each client",
+        "Please select Package of Care for each client",
+      ]);
+    }
   };
 
   return (
@@ -359,10 +563,13 @@ function CarerDetail() {
           <ClientBox
             select={handleSelect}
             change={change}
-            clients={currentCarerClients}
+            clients={filteredClients}
             carer={carer}
             startDate={startDate}
             endDate={endDate}
+            calls={calls}
+            poc={poc}
+            carerClients={carerClients}
           />
         </div>
         {errors.length ? (

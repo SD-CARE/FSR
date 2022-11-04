@@ -67,7 +67,7 @@ router.post(
   "/write",
   asyncHandler(async (req, res) => {
     try {
-      const data = fs.readFileSync("../client/src/NPC.json");
+      const data = fs.readFileSync("./build/NPC.json");
       const json = JSON.parse(data);
       json.push(req.body);
       const filtered = json.filter(
@@ -80,14 +80,10 @@ router.post(
               t["Item"] === item["Item"]
           )
       );
-      fs.writeFile(
-        "../client/src/NPC.json",
-        JSON.stringify(filtered),
-        (err) => {
-          if (err) throw err;
-          console.log("File created!");
-        }
-      );
+      fs.writeFile("./build/NPC.json", JSON.stringify(filtered), (err) => {
+        if (err) throw err;
+        console.log("File created!");
+      });
 
       res.status(201).location("/").end();
     } catch (err) {
@@ -101,7 +97,7 @@ router.get(
   "/write",
   asyncHandler(async (req, res) => {
     try {
-      const words = fs.readFileSync("../client/src/NPC.json");
+      const words = fs.readFileSync("./build/NPC.json");
       const data = JSON.parse(words);
       res.status(200).json(data);
     } catch (err) {
@@ -296,7 +292,10 @@ router.get(
   asyncHandler(async (req, res) => {
     try {
       const metrics = await Metric.findAll({
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        order: [["metricNameID", "ASC"]],
       });
       res.status(200).json({ metrics });
     } catch (err) {

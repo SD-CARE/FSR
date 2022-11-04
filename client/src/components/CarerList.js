@@ -112,16 +112,16 @@ function Carers() {
             )
             .filter(
               (carer) =>
-                carer.forename.toLowerCase().includes(query) ||
-                carer.surname.toLowerCase().includes(query)
+                carer.forename.toLowerCase().includes(query.toLowerCase()) ||
+                carer.surname.toLowerCase().includes(query.toLowerCase())
             )
             .map((carer, index) => (
               <form key={index}>
                 <Link
-                  to={`/carers/${
+                  to={`${
                     carer.carerID
                       ? carer.carerID + "/assessed/select"
-                      : `NPC/create/${carer.identifier}`
+                      : `/write/${carer.identifier}`
                   }`}
                   className={`carer--module ${
                     carer.carerID ? "active" : "not-active"

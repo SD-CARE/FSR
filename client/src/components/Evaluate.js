@@ -51,6 +51,7 @@ function Evaluate() {
   useEffect(() => {
     sDData.getMetrics().then((res) => setMetrics(res.metrics));
   }, []);
+
   // create the errors instence in state and set it to an empty array
   const [errors, setErrors] = useState([]);
   // store the useNavigate method to a constant
@@ -102,6 +103,16 @@ function Evaluate() {
     }
   }, [ratingInput]);
 
+  // get the last ratingID incase the user changes the poc
+  const lastRating = checkedRating.reduce((acc, cur, i) => {
+    acc[cur.metricID] = { i: cur };
+    return acc;
+  }, {});
+
+  const outPutRating = Object.values(lastRating)
+    .sort((a, b) => a.i - b.i)
+    .map(({ i: val }) => val);
+
   // COMPLIED
   const [complied, setcomplied] = useState({
     metricID: "",
@@ -134,6 +145,16 @@ function Evaluate() {
       setCheckedComplied([...checkedComplied, complied]);
     }
   }, [complied]);
+
+  // get the last compliedID incase the user changes the poc
+  const lastComplied = checkedComplied.reduce((acc, cur, i) => {
+    acc[cur.metricID] = { i: cur };
+    return acc;
+  }, {});
+
+  const outPutComplied = Object.values(lastComplied)
+    .sort((a, b) => a.i - b.i)
+    .map(({ i: val }) => val);
 
   // COMMENT POST
 
@@ -180,24 +201,8 @@ function Evaluate() {
   const submit = (e) => {
     e.preventDefault();
     // wait for the user to finish tying before you can save the comment
-    sDData.createMetricRatings(
-      checkedRating.filter(
-        (value, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.carerID === value.carerID && t.metricID === value.metricID
-          )
-      )
-    );
-    sDData.createMetricComplied(
-      checkedComplied.filter(
-        (value, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.carerID === value.carerID && t.metricID === value.metricID
-          )
-      )
-    );
+    sDData.createMetricRatings(outPutRating);
+    sDData.createMetricComplied(outPutComplied);
     sDData
       .createComments(commentData)
       //  then if there is any errors

@@ -173,6 +173,20 @@ export default class SDData {
     }
   }
 
+  // get the NPC data from the JSON file
+  async getCarerNPC() {
+    // create the response constant to hold the data from the api
+    const response = await this.api("/write");
+    // if the response is ok
+    if (response.status === 200) {
+      // return the data in json then save it as data
+      return response.json().then((data) => data);
+      // else throw the errors from the api
+    } else {
+      throw new Error(`Something went wrong: ${response.status}`);
+    }
+  }
+
   // REGIONS
   async createRegions(region) {
     const response = await this.api("/regions", "POST", region);

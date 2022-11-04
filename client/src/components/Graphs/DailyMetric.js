@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from "react";
 import {
   Chart as ChartJS,
@@ -9,9 +11,9 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import AnnualBarMetric from "./AnnualBarMetric";
+import DailyBarMetric from "./DailyBarMetric";
 import { Context } from "../../Context";
-export const AnnualMetrics = React.forwardRef((props, ref) => {
+export const DailyMetric = React.forwardRef((props, ref) => {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -43,44 +45,6 @@ export const AnnualMetrics = React.forwardRef((props, ref) => {
     sDData.getMetricRatings().then((res) => setMetricRating(res.metric));
   }, []);
 
-  // create all date graphs
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    metricRating
-      ? setData([
-          metricRating.map((rating) => {
-            const date = new Date(rating.startDate);
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const day = date.getDate();
-            return {
-              year: year,
-              month: month,
-              day: day,
-            };
-          }),
-        ])
-      : setData([]);
-  }, [metricRating]);
-
-  // filter out duplicate dates
-  const [uniqueDates, setUniqueDates] = useState([]);
-  useEffect(() => {
-    data && data.length > 0
-      ? setUniqueDates(
-          data[0].filter(
-            (date, index, self) =>
-              index ===
-              self.findIndex(
-                (t) =>
-                  t.year === date.year &&
-                  t.month === date.month &&
-                  t.day === date.day
-              )
-          )
-        )
-      : setUniqueDates([]);
-  }, [data]);
   // compare the metricRating with the current carer
   const [carerRating, setCareRating] = useState();
   useEffect(() => {
@@ -104,25 +68,34 @@ export const AnnualMetrics = React.forwardRef((props, ref) => {
             return {
               startDate: rating.startDate,
               carerID: rating.carerID,
-              rating: ratings.filter(
-                (rate) => rating.ratingID === rate.ratingID
-              ),
+              rating: ratings.filter((rate) => {
+                if (rate !== null && rate !== undefined) {
+                  return rating.ratingID === rate.ratingID;
+                }
+              }),
             };
           })
         )
       : setCarerRatings([]);
-  }, [carerRating]);
+  }, [carerRating, ratings]);
 
   //  group all ratings by carerID and startDate in an array
-  const [carerRatingsGrouped, setCarerRatingsGrouped] = useState([]);
+  const [carerRatingsGrouped, setCarerRatingsGrouped] = useState();
   useEffect(() => {
     carerRatings !== undefined && carerRatings !== null
       ? setCarerRatingsGrouped(
           carerRatings.reduce((r, a) => {
-            r[a.startDate] = r[a.startDate] || [];
-            r[a.startDate].push(a);
+            // if the a is not null and not undefined
+            if (
+              a.rating !== null &&
+              a.rating !== undefined &&
+              a.rating.length > 0
+            ) {
+              r[a.startDate] = r[a.startDate] || [];
+              r[a.startDate].push(a);
 
-            return r;
+              return r;
+            }
           }, Object.create(null))
         )
       : setCarerRatingsGrouped([]);
@@ -171,61 +144,60 @@ export const AnnualMetrics = React.forwardRef((props, ref) => {
   const [allTheRatingDates, setAllTheRatingDates] = useState({
     rating: [],
     carer: [],
-    startDate: [],
+    date: [],
   });
+  let carer;
   useEffect(() => {
-    setAllTheRatingDates([
-      Object.entries(carerRatingsGrouped).map(([key, value]) => {
-        let carers = [];
-        value.map((carer) =>
-          currcarer.filter((c) =>
-            c.carerID === carer.carerID ? carers.push(c) : null
-          )
-        );
-
-        let ratings = [];
-        value.map((rating) =>
-          rating.rating[0] !== null && rating.rating[0] !== undefined
-            ? ratings.push(rating.rating[0].rating)
-            : null
+    if (carerRatingsGrouped !== undefined && carerRatingsGrouped !== null) {
+      const allTheRatingDates = Object.keys(carerRatingsGrouped).map((key) => {
+        carer = carerRatingsGrouped[key].map((carer) => carer.carerID);
+        // filter out duplicate carerID
+        carer = carer.filter(
+          (id, index, self) => index === self.findIndex((t) => t === id)
         );
 
         return {
-          rating: ratings,
-          carer: carers.filter(
-            (c, index, self) =>
-              index ===
-              self.findIndex(
-                (t) =>
-                  t.carerID === c.carerID &&
-                  t.startDate === c.startDate &&
-                  t.endDate === c.endDate
-              )
-          ),
-
           date: key,
+          rating: carerRatingsGrouped[key].map((rating) => {
+            if (
+              rating.rating[0] !== undefined &&
+              rating.rating[0] !== null &&
+              rating !== null &&
+              rating !== undefined
+            ) {
+              return rating.rating[0].rating;
+            }
+          }),
+          carer: carer.map((id) => {
+            return carers.filter((carerName) =>
+              carerName.carerID === id ? carerName : null
+            );
+          }),
         };
-      }),
-    ]);
-  }, [carerRatingsGrouped, ratings, carers]);
+      });
+      setAllTheRatingDates(allTheRatingDates);
+    }
+  }, [carerRatingsGrouped, carers, carer]);
 
   return currcarer !== undefined &&
     currcarer !== null &&
     currcarer.length > 0 ? (
     <div ref={ref} className="wrap">
-      <h2>Annual Performance Metrics</h2>
+      <h2>Daily Performance Metrics</h2>
       <div className="months">
-        {allTheRatingDates[0] !== undefined &&
-        allTheRatingDates[0] !== null &&
-        allTheRatingDates[0].length > 0
-          ? allTheRatingDates[0].map((date, i) => (
-              <AnnualBarMetric
-                carers={date.carer}
-                date={date.date}
-                key={i}
-                rating={date.rating}
-              />
-            ))
+        {allTheRatingDates !== undefined &&
+        allTheRatingDates !== null &&
+        allTheRatingDates.length > 0
+          ? allTheRatingDates.map((date, i) =>
+              date !== undefined ? (
+                <DailyBarMetric
+                  carers={date.carer}
+                  date={date.date}
+                  key={i}
+                  rating={date.rating}
+                />
+              ) : null
+            )
           : null}
       </div>
     </div>

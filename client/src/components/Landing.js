@@ -3,10 +3,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../Context";
-import NPC from "../NPC.json";
-import Metrics from "../metrics";
 function Landing() {
-  const { sDData, cPData } = useContext(Context);
+  const { sDData, cPData, NPC } = useContext(Context);
 
   // GET ALL CLIENTS
   const [clients, setclients] = useState([]);
@@ -57,35 +55,54 @@ function Landing() {
       }),
     ]);
   }, [allCarers]);
+
   // Compare Names in Carer with NPC object
   const handleChange = (e) => {
-    if (e.length > 0 && e !== []) {
+    if (
+      e.length > 0 &&
+      e !== [] &&
+      e !== undefined &&
+      e !== null &&
+      NPC !== undefined &&
+      NPC !== null
+    ) {
       e.filter((carer) => {
-        const name = `${carer.forename} ${carer.surname}`;
-        NPC.forEach((npc) => {
-          if (npc["Staff Name"] === name) {
+        NPC.some((npc) => {
+          if (
+            npc["Staff Name"] === carer.forename + carer.surname ||
+            npc["Staff Name"] === carer.forename + " " + carer.surname ||
+            // remove whitespaces from staff name
+            npc["Staff Name"].replace(/\s/g, "") ===
+              carer.forename + carer.surname ||
+            // remove whitespaces from carer.forename and carer.surname
+            npc["Staff Name"].replace(/\s/g, "") ===
+              carer.forename.replace(/\s/g, "") +
+                carer.surname.replace(/\s/g, "")
+          ) {
             carer.NPC = npc["Employee No"].split(" ").pop();
           }
         });
       });
-      setCarersWithNPC([
-        ...Object.entries(e).map(([key, value]) => {
-          if (e[key].NPC !== undefined) {
-            return {
-              CPID: value.CPID,
-              forename: value.forename,
-              surname: value.surname,
-              initials: `${value.forename.charAt(0)}${value.surname.charAt(0)}`,
-              NPC: value.NPC,
-            };
-          }
-        }),
-      ]);
     }
+
+    setCarersWithNPC([
+      ...Object.entries(carer).map(([key, value]) => {
+        if (carer[key].NPC !== undefined) {
+          return {
+            CPID: value.CPID,
+            forename: value.forename,
+            surname: value.surname,
+            initials: `${value.forename.charAt(0)}${value.surname.charAt(0)}`,
+            NPC: value.NPC,
+          };
+        }
+      }),
+    ]);
   };
+
   useEffect(() => {
     handleChange(carer);
-  }, [carer]);
+  }, [carer, NPC]);
 
   useEffect(() => {
     if (carersWithNPC.length !== undefined) {
@@ -119,23 +136,6 @@ function Landing() {
   useEffect(() => {
     client ? sDData.createClients(client) : console.log("No clients");
   }, [client]);
-
-  // Metrics create
-  const [metrics, setMetrics] = useState([]);
-  useEffect(() => {
-    setMetrics([
-      ...Object.entries(Metrics).map(([key, value]) => {
-        return {
-          performanceMetric: value["Performance Metrics"],
-        };
-      }),
-    ]);
-  }, []);
-  useEffect(() => {
-    if (metrics.length >= 1) {
-      sDData.createMetrics(metrics);
-    }
-  }, [metrics]);
 
   // Create POC
   // Create an arrary of Package Of Care
@@ -254,10 +254,7 @@ function Landing() {
         </Link>
       </div>
       <div className="performance-metrics-container">
-        <Link
-          to="/annualmetrics"
-          className="carer--module course--link landing"
-        >
+        <Link to="/dailymetrics" className="carer--module course--link landing">
           Performance Metrics
         </Link>
       </div>

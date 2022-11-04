@@ -6,8 +6,8 @@ function MetricEvaluated({ currentPerformance }) {
       {currentPerformance !== null && currentPerformance.length > 0 ? (
         currentPerformance.map((metric, index) =>
           metric !== null && metric !== undefined ? (
-            <>
-              <p key={index} className="metricName-evaluated">
+            <div key={index}>
+              <p className="metricName-evaluated">
                 <span>{metric.metricID}:</span>
                 {metric.metricName}
               </p>
@@ -34,7 +34,7 @@ function MetricEvaluated({ currentPerformance }) {
                 <span>Comment:</span>
                 <p>{metric.comment}</p>
               </div>
-            </>
+            </div>
           ) : null
         )
       ) : (

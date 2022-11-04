@@ -37,8 +37,8 @@ function Clients() {
         {clients
           .filter(
             (client) =>
-              client.forename.toLowerCase().includes(query) ||
-              client.surname.toLowerCase().includes(query)
+              client.forename.toLowerCase().includes(query.toLowerCase()) ||
+              client.surname.toLowerCase().includes(query.toLowerCase())
           )
           .map((client, index) => (
             <form>

@@ -2,12 +2,12 @@
 
 // load modules
 const express = require("express");
-const morgan = require("morgan");
 const { sequelize } = require("./models");
 const routes = require("./routes");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const fs = require("fs");
+const externalAPI = require("./externalAPI");
+const path = require("path");
 
 // variable to enable global error logging
 const enableGlobalErrorLogging =
@@ -19,17 +19,18 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
 
-// setup morgan which gives us http request logging
-app.use(morgan("dev"));
-
-// setup a friendly greeting for the root route
-app.get("/", (req, res) => {
-  res.json({
-    message: "Welcome to the REST API project!",
-  });
-});
-
+// setup route to access external apiBaseUrl
+app.use("/externalAPI", externalAPI);
 app.use("/api", routes);
+
+// create a conection to the build frontend
+app.use(express.static("build"));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 // send 404 if no other route matched
 app.use((req, res) => {
@@ -51,7 +52,7 @@ app.use((err, req, res, next) => {
 });
 
 // set our port
-app.set("port", process.env.PORT || 5000);
+app.set("port", process.env.PORT || 8080);
 
 // Test the database connection
 (async () => {

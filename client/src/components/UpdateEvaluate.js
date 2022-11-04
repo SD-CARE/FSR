@@ -255,7 +255,6 @@ function UpdateEvaluate() {
   updateRating.startDate = carerDateRange.selection.startDate;
   updateRating.endDate = carerDateRange.selection.endDate;
   const handleSelect = (e) => {
-    console.log(e.target.className);
     e.stopPropagation();
     const { name, value } = e.target;
     setUpdateRating((updateRating) => ({
@@ -276,6 +275,16 @@ function UpdateEvaluate() {
       setCheckedRating([...checkedRating, updateRating]);
     }
   }, [updateRating]);
+
+  // get the last ratingID incase the user changes the poc
+  const lastRating = checkedRating.reduce((acc, cur, i) => {
+    acc[cur.metricID] = { i: cur };
+    return acc;
+  }, {});
+
+  const outPutRating = Object.values(lastRating)
+    .sort((a, b) => a.i - b.i)
+    .map(({ i: val }) => val);
 
   const [updateComplied, setUpdateComplied] = useState({
     metricCompliedID: "",
@@ -309,6 +318,16 @@ function UpdateEvaluate() {
       setCheckedComplied([...checkedComplied, updateComplied]);
     }
   }, [updateComplied]);
+
+  // get the last compliedID incase the user changes the poc
+  const lastComplied = checkedComplied.reduce((acc, cur, i) => {
+    acc[cur.metricID] = { i: cur };
+    return acc;
+  }, {});
+
+  const outPutComplied = Object.values(lastComplied)
+    .sort((a, b) => a.i - b.i)
+    .map(({ i: val }) => val);
 
   // COMMENT POST
   // Declare a timer
@@ -353,29 +372,11 @@ function UpdateEvaluate() {
   const submit = (e) => {
     e.preventDefault();
     // wait for the user to finish tying before you can save the comment
-    sDData.updateMetricRating(
-      checkedRating.filter(
-        (value, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.carerID === value.carerID && t.metricID === value.metricID
-          )
-      ),
-      authenticatedUser
-    );
-    sDData.updateMetricComplied(
-      checkedComplied.filter(
-        (value, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.carerID === value.carerID && t.metricID === value.metricID
-          )
-      ),
-      authenticatedUser
-    );
-    commentData.length > 0
-      ? sDData.updateComments(commentData, authenticatedUser)
-      : console.log("no comment");
+    sDData.updateMetricRating(outPutRating, authenticatedUser);
+    sDData.updateMetricComplied(outPutComplied, authenticatedUser);
+    if (commentData.length > 0)
+      sDData.updateComments(commentData, authenticatedUser);
+
     navigate(`/carers/${id}/assessed/detail`)
       .then((errors) => {
         // set the errors array to display them

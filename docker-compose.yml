@@ -1,0 +1,22 @@
+version: "3"
+services:
+  backend:
+    build: ./api
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    env_file:
+      - ./api/.env
+  frontend:
+    build: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    env_file:
+      - ./client/.env
+    depends_on:
+      - backend

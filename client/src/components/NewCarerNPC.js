@@ -3,26 +3,37 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { Context } from "../Context";
-import NPC from "../NPC.json";
 
 function NewCarerNPC() {
   const { sDData, cPData } = useContext(Context);
-  const [currentCarer, setCurrentCarer] = useState({});
+
+  const [currentCarer, setCurrentCarer] = useState();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
     cPData.getCarer(`"${id}"`).then((data) => setCurrentCarer(data[0]));
   }, []);
-
   const [carer, setCarer] = useState({
-    Item: "",
-    "Staff Name": "",
-    "Employee No": "NPC",
+    forename: "",
+    surname: "",
+    initials: "",
+    CPID: "",
+    NPC: "",
   });
-  carer.Item = NPC.length + 1;
-  carer["Staff Name"] = currentCarer.forename + " " + currentCarer.surname;
 
+  if (
+    currentCarer !== undefined &&
+    currentCarer !== null &&
+    currentCarer !== ""
+  ) {
+    carer.forename = currentCarer.forename;
+    carer.surname = currentCarer.surname;
+    carer.initials = `${currentCarer.forename.charAt(
+      0
+    )}${currentCarer.surname.charAt(0)}`;
+    carer.CPID = currentCarer.identifier;
+  }
   // create the change function
   const change = (e) => {
     // create the name and value constants to store events from the inputs
@@ -31,35 +42,30 @@ function NewCarerNPC() {
     // spreading the already exiting contents
     setCarer((carer) => ({ ...carer, [name]: value }));
   };
-  const [errors, setError] = useState([]);
+
+  const [errors, setErrors] = useState([]);
   const submit = (e) => {
     e.preventDefault();
-    NPC.filter((item) => {
-      if (item["Employee No"] === carer["Employee No"]) {
-        setError(["Employee No already exists"]);
-      } else if (item["Staff Name"] === carer["Staff Name"]) {
-        setError(["Staff Name already exists"]);
-      } else {
-        setError([]);
-      }
-    });
+
     sDData
-      .createCarerNPC(carer)
-      .then(() => {
-        if (location.state?.from) {
-          // navigate back to that location
-          navigate(location.state.from);
-          // else navigate to the root /
-        } else {
-          navigate("/");
-        }
+      .createCarers([carer])
+      .then((errors) => {
+        // set the errors array to display them
+        setErrors(errors);
       })
-      // catch any errors throw by the api and console log them
+      // catch any errors thrown by the api and log them to the console
       .catch((err) => {
         console.log(err);
-        // then navigate to /error
+        // navigate to the /error
         navigate("/error");
       });
+    if (location.state?.from) {
+      // navigate back to that location
+      navigate(location.state.from);
+      // else navigate to the root /
+    } else {
+      navigate("/");
+    }
   };
 
   return currentCarer !== undefined ? (
@@ -84,21 +90,29 @@ function NewCarerNPC() {
         </>
       )}
       <form onSubmit={submit}>
-        <label htmlFor="Staff Name">Staff Name</label>
+        <label htmlFor="forename">forename</label>
         <input
-          id="Staff Name"
-          name="Staff Name"
+          id="forename"
+          name="forename"
           type="text"
           onChange={change}
-          value={carer["Staff Name"]}
+          value={carer.forename}
         />
-        <label htmlFor="Employee No">Employee No</label>
+        <label htmlFor="surname">Surname</label>
         <input
-          id="Employee No"
-          name="Employee No"
+          id="surname"
+          name="surname"
           type="text"
           onChange={change}
-          value={carer["Employee No"]}
+          value={carer.surname}
+        />
+        <label htmlFor="NPC">NPC</label>
+        <input
+          id="NPC"
+          name="NPC"
+          type="text"
+          onChange={change}
+          value={carer.NPC}
         />
         <button
           type="submit"

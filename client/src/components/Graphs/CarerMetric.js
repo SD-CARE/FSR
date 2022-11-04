@@ -12,9 +12,9 @@ import {
   Legend,
 } from "chart.js";
 import { Context } from "../../Context";
-import MonthlyBarMetric from "./monthlyBar";
+import CarerBarMetric from "./CarerBar";
 import { useParams } from "react-router-dom";
-export const MonthlyMetrics = React.forwardRef((props, ref) => {
+export const CarerMetrics = React.forwardRef((props, ref) => {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -89,14 +89,14 @@ export const MonthlyMetrics = React.forwardRef((props, ref) => {
     ratingDate.length > 0 && metrics
       ? setRate(
           ratingDate.map((rateDate) => {
-            if (rateDate !== null) {
+            if (rateDate !== null && rateDate !== undefined) {
               return metrics.map((metric) =>
                 rateDate.metricID === metric.metricNameID
                   ? {
                       metricName: metric.performanceMetric,
                       metricID: rateDate.metricID,
                       ratingName: ratings.filter((rating) =>
-                        rating !== null
+                        rating !== null && rating !== undefined
                           ? rateDate.ratingID === rating.ratingID
                           : null
                       ),
@@ -107,18 +107,26 @@ export const MonthlyMetrics = React.forwardRef((props, ref) => {
           })
         )
       : setRate([]);
-  }, [ratingDate, metrics]);
+  }, [ratingDate, metrics, ratings]);
 
   // prepare rating data for the chart
   const [ratingData, setRatingData] = useState([]);
   useEffect(() => {
-    rate ? (
+    rate && rate !== null && rate !== undefined ? (
       setRatingData(
-        rate.map((rate) => {
-          if (rate !== null && rate !== undefined) {
-            return rate.map((r) => {
-              if (r !== null && r !== undefined) {
-                return r.ratingName[0].rating ? r.ratingName[0].rating : null;
+        rate.map((rater) => {
+          if (
+            rater !== null &&
+            rater !== undefined &&
+            rater.length > 0 &&
+            rater !== []
+          ) {
+            return rater.map((r) => {
+              console.log(r !== null && r !== undefined ? r.ratingName : !r);
+              if (r !== null && r !== undefined && r !== [] && r.ratingName) {
+                return r.ratingName[0] && r.ratingName !== []
+                  ? r.ratingName[0].rating
+                  : null;
               }
             });
           }
@@ -143,7 +151,7 @@ export const MonthlyMetrics = React.forwardRef((props, ref) => {
   return (
     <div ref={ref} className="wrap">
       <h2>Performance Metrics</h2>
-      <MonthlyBarMetric
+      <CarerBarMetric
         carer={carer}
         metrics={metrics}
         fiteredRating={fiteredRating}

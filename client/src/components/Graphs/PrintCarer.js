@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { MonthlyMetrics } from "./monthlyMetric";
+import { CarerMetrics } from "./CarerMetric";
 import { Link, useParams } from "react-router-dom";
-function PrintMonthly() {
+function PrintCarer() {
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -10,7 +10,7 @@ function PrintMonthly() {
   const { id } = useParams();
   return (
     <div>
-      <MonthlyMetrics ref={componentRef} />
+      <CarerMetrics ref={componentRef} />
       <div className="btn-container print-btn">
         <button onClick={handlePrint} className="button btn-primary btn">
           Print
@@ -26,4 +26,4 @@ function PrintMonthly() {
   );
 }
 
-export default PrintMonthly;
+export default PrintCarer;

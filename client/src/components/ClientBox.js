@@ -1,150 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useState, useEffect } from "react";
-import { Context } from "../Context";
+import React from "react";
 
-function ClientBox({ clients, carer, change, select, startDate, endDate }) {
-  const { sDData, cPData } = useContext(Context);
-  // get all client regions from the database
-  const [clientRegions, setClientRegions] = useState([]);
-  useEffect(() => {
-    sDData.getRegions().then((res) => setClientRegions(res.regions));
-  }, []);
-
-  // get all clients
-  const [allClients, setAllClients] = useState([]);
-  useEffect(() => {
-    cPData.getAllClients().then((res) => setAllClients(res));
-  }, []);
-
-  const [carerClients, setCarerClients] = useState([]);
-  useEffect(() => {
-    setCarerClients([
-      ...Object.entries(clients).map(([key, value]) => {
-        return {
-          id: value.clientID,
-          CPID: value.CPID,
-          forename: value.forename,
-          surname: value.surname,
-          regions: allClients.filter((client) => {
-            return client.identifier === value.CPID;
-          }),
-        };
-      }),
-    ]);
-  }, [allClients, clients]);
-
-  // set the current clients's regionIDs
-  const [currentClientRegionID, setCurrentClientRegionID] = useState([]);
-  useEffect(() => {
-    setCurrentClientRegionID([
-      // eslint-disable-next-line array-callback-return
-      ...Object.entries(carerClients).map(([key, value]) => {
-        if (value.CPID === value.regions[0].identifier) {
-          return {
-            regionID:
-              // if value.regions[0].regions.length > 1
-              value.regions[0].regions.length > 1
-                ? value.regions[0].regions.map((reg) =>
-                    clientRegions.filter((re) => reg.identifier === re.CPID)
-                  )
-                : // otherwise return the regionID of the first region
-                  clientRegions.filter((region) =>
-                    value.regions[0].regions[0].identifier === region.CPID
-                      ? region
-                      : null
-                  ),
-            clientID: value.id,
-          };
-        }
-      }),
-    ]);
-  }, [carerClients]);
-
-  const [filteredRegions, setFilteredRegions] = useState([]);
-  // Clean up the currentClientRegionID make it ready for the database
-  useEffect(() => {
-    // make sure the currentClientRegionID is not empty
-    if (currentClientRegionID.length >= 1) {
-      // create a new object for each regionID
-      setFilteredRegions([
-        ...currentClientRegionID.map((region) => {
-          return {
-            regionID:
-              region.regionID.length > 1
-                ? region.regionID.map((reg) => ({
-                    regionID: reg[0].regionID,
-                    clientID: region.clientID,
-                    startDate: startDate,
-                    endDate: endDate,
-                  }))
-                : region.regionID[0].regionID,
-            clientID: region.clientID,
-            startDate: startDate,
-            endDate: endDate,
-          };
-        }),
-      ]);
-    }
-  }, [currentClientRegionID]);
-  // Create array to hold filtered regionsID
-
-  useEffect(() => {
-    let array = [];
-    // If filteredRegions is not empty
-    if (filteredRegions.length > 0) {
-      // Find the regionIDs that are more than one
-      filteredRegions.find((reg) =>
-        // and push them into the array
-        reg.regionID.length > 1 ? array.push(...reg.regionID) : null
-      );
-      // now filter the filteredRegions to remove the regionIDs that are more than one
-      filteredRegions.filter((reg) =>
-        // and push the ones that are not into the array
-        !reg.regionID.length ? array.push(reg) : null
-      );
-    }
-    // Post the filteredRegions to the database
-    sDData.setClientRegion(array);
-  }, [filteredRegions]);
-
-  // get all calls from the database
-  const [calls, setCalls] = useState([]);
-  useEffect(() => {
-    sDData.getCalls().then((res) => setCalls(res.calls));
-  }, []);
-
-  // get all poc from the database
-  const [poc, setPOC] = useState([]);
-  useEffect(() => {
-    sDData.getPOC().then((res) => setPOC(res.poc));
-  }, []);
-
-  // create array to hold clientIDs, carerIDs, start and end dates
-  const [carerClientDates, setCarerClientDates] = useState([]);
-  useEffect(() => {
-    // if carerClients is not empty
-    if (carerClients.length > 0) {
-      setCarerClientDates(
-        Object.entries(carerClients).map(([key, value]) => {
-          return {
-            clientID: value.id,
-            carerID: carer.carerID,
-            startDate: startDate,
-            endDate: endDate,
-          };
-        })
-      );
-    }
-  }, [carerClients]);
-
-  // Post the carerClientDates to the database
-  useEffect(() => {
-    // if carerClientDates is not empty
-    if (carerClientDates.length > 0) sDData.setCarerClients(carerClientDates);
-  }, [carerClientDates]);
+function ClientBox({ carerClients, carer, change, select, calls, poc }) {
   return (
     <>
-      {carerClients && carerClients.length >= 1 ? (
+      {carerClients &&
+      carerClients.length >= 1 &&
+      carerClients !== null &&
+      carerClients !== undefined ? (
         carerClients.map((client, index) => (
           <div key={index} className="client-box-item">
             <div className="client-name-schedule">
@@ -152,15 +15,17 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
                 {client.forename} {client.surname}
               </h2>
               <span className="client--schedule">
-                {client.regions[0].regions.length === 1 && client.regions
-                  ? client.regions[0].regions[0].name.includes("Schedule")
-                    ? client.regions[0].regions[0].name.split(" ")[1]
-                    : client.regions[0].regions[0].name
-                  : client.regions[0].regions.map((region, i) => {
-                      return region.name.includes("Schedule")
-                        ? `${region.name.split(" ")[1]} | `
-                        : region.name;
-                    })}
+                {client.regions[0] !== undefined && client.regions[0] !== null
+                  ? client.regions[0].regions.length === 1
+                    ? client.regions[0].regions[0].name.includes("Schedule")
+                      ? client.regions[0].regions[0].name.split(" ")[1]
+                      : client.regions[0].regions[0].name
+                    : client.regions[0].regions.map((region, i) => {
+                        return region.name.includes("Schedule")
+                          ? `${region.name.split(" ")[1]} | `
+                          : region.name;
+                      })
+                  : null}
               </span>
             </div>
             <div className="client-calls">
@@ -202,11 +67,13 @@ function ClientBox({ clients, carer, change, select, startDate, endDate }) {
             </div>
           </div>
         ))
-      ) : (
+      ) : carer !== undefined ? (
         <h3 className="noClients">
           {carer.forename + " " + carer.surname} has no client appointments for
           the selected date
         </h3>
+      ) : (
+        <div>Loading...</div>
       )}
     </>
   );

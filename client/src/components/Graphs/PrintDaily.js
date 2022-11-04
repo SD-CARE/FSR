@@ -1,15 +1,15 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { AnnualMetrics } from "./annualMetrics";
+import { DailyMetric } from "./DailyMetric";
 import { Link } from "react-router-dom";
-function PrintAnnual() {
+function PrintDaily() {
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
   return (
     <div>
-      <AnnualMetrics ref={componentRef} />
+      <DailyMetric ref={componentRef} />
       <div className="btn-container print-btn">
         <button onClick={handlePrint} className="button btn-primary btn">
           Print
@@ -22,4 +22,4 @@ function PrintAnnual() {
   );
 }
 
-export default PrintAnnual;
+export default PrintDaily;
