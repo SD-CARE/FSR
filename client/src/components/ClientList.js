@@ -4,6 +4,7 @@
 
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../Context";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Clients() {
   // pull in the data from the context api
@@ -24,6 +25,14 @@ function Clients() {
       .catch((err) => console.log(err));
   }, [cPData]);
 
+  // set loading time for the spinner
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => setLoading(false), 2000);
+    }
+  }, [loading]);
+
   return (
     <>
       <div className="search-container">
@@ -33,40 +42,56 @@ function Clients() {
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
-      <div className="wrap main--grid">
-        {clients
-          .filter(
-            (client) =>
-              client.forename.toLowerCase().includes(query.toLowerCase()) ||
-              client.surname.toLowerCase().includes(query.toLowerCase())
-          )
-          .map((client, index) => (
-            <form>
-              <div key={index} className="carer--module">
-                <h2 className="carer--label">
-                  {client.forename} {client.surname}
-                </h2>
-                <h6 className="carer--schedule">
-                  Schedules:
-                  {client.regions.length >= 1
-                    ? client.regions.map((regions) => {
-                        if (regions.name.includes("Schedule")) {
-                          setRegionsName(` ${regions.name.split(" ").pop()}`);
-                          return ` ${regions.name.split(" ").pop()}`;
-                        } else {
-                          setRegionsName(` ${regions.name}`);
-                          return ` ${regions.name}`;
-                        }
-                      })
-                    : null}
-                </h6>
-                <h6 className="carer--schedule">
-                  Address:
-                  {client.address.address}
-                </h6>
-              </div>
-            </form>
-          ))}
+      <div className={`wrap  ${clients.length > 0 ? "main--grid" : ""} `}>
+        {clients.length > 0 ? (
+          clients
+            .filter(
+              (client) =>
+                client.forename.toLowerCase().includes(query.toLowerCase()) ||
+                client.surname.toLowerCase().includes(query.toLowerCase())
+            )
+            .map((client, index) => (
+              <form>
+                <div key={index} className="carer--module">
+                  <h2 className="carer--label">
+                    {client.forename} {client.surname}
+                  </h2>
+                  <h6 className="carer--schedule">
+                    Schedules:
+                    {client.regions.length >= 1
+                      ? client.regions.map((regions) => {
+                          if (regions.name.includes("Schedule")) {
+                            setRegionsName(` ${regions.name.split(" ").pop()}`);
+                            return ` ${regions.name.split(" ").pop()}`;
+                          } else {
+                            setRegionsName(` ${regions.name}`);
+                            return ` ${regions.name}`;
+                          }
+                        })
+                      : null}
+                  </h6>
+                  <h6 className="carer--schedule">
+                    Address:
+                    {client.address.address}
+                  </h6>
+                </div>
+              </form>
+            ))
+        ) : loading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <CircularProgress style={{ color: "#5e3a98" }} />
+          </div>
+        ) : (
+          <div>
+            <h2>No Clients Found</h2>
+          </div>
+        )}
       </div>
     </>
   );

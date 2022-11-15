@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function ClientBox({ carerClients, carer, change, select, calls, poc }) {
   return (
@@ -67,13 +68,16 @@ function ClientBox({ carerClients, carer, change, select, calls, poc }) {
             </div>
           </div>
         ))
-      ) : carer !== undefined ? (
-        <h3 className="noClients">
-          {carer.forename + " " + carer.surname} has no client appointments for
-          the selected date
-        </h3>
       ) : (
-        <div>Loading...</div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
+        >
+          <CircularProgress style={{ color: "#5e3a98" }} />
+        </div>
       )}
     </>
   );

@@ -2,55 +2,55 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../Context";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import HelpIcon from "@mui/icons-material/Help";
-import Popover from "@mui/material/Popover";
-import Typography from "@mui/material/Typography";
 
 function Evaluate() {
-  const { sDData, currentstartDate, currentendDate, authenticatedUser } =
-    useContext(Context);
+  const {
+    sDData,
+    authenticatedUser,
+    continueAssessEndDate,
+    continueAssessStartDate,
+  } = useContext(Context);
 
   // create exact date string for the appointments
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   useEffect(() => {
-    if (currentendDate !== undefined && currentstartDate !== undefined) {
+    if (
+      continueAssessEndDate !== undefined &&
+      continueAssessStartDate !== undefined
+    ) {
       if (
-        new Date(currentstartDate).toISOString().split("T")[0] !==
-          new Date(currentendDate).toISOString().split("T")[0] ||
-        new Date(currentstartDate).toISOString().split("T")[0] !==
+        new Date(continueAssessStartDate).toISOString().split("T")[0] !==
+          new Date(continueAssessEndDate).toISOString().split("T")[0] ||
+        new Date(continueAssessStartDate).toISOString().split("T")[0] !==
           new Date().toISOString().split("T")[0]
       ) {
-        const start = new Date(currentstartDate);
+        const start = new Date(continueAssessStartDate);
+
         if (start.getTimezoneOffset() === 0) {
           start.setDate(start.getDate());
-        } else {
-          start.setDate(start.getDate() + 1);
         }
         setStartDate(start.toISOString().split("T")[0] + "T00:00:00.000Z");
 
-        const end = new Date(currentendDate);
+        const end = new Date(continueAssessEndDate);
 
         if (end.getTimezoneOffset() === 0) {
           end.setDate(end.getDate());
-        } else {
-          end.setDate(end.getDate() + 1);
         }
-
         setEndDate(end.toISOString().split("T")[0] + "T23:59:00.000Z");
       } else {
         setStartDate(
-          new Date(currentstartDate).toISOString().split("T")[0] +
+          new Date(continueAssessStartDate).toISOString().split("T")[0] +
             "T00:00:00.000Z"
         );
         setEndDate(
-          new Date(currentendDate).toISOString().split("T")[0] +
+          new Date(continueAssessEndDate).toISOString().split("T")[0] +
             "T23:59:00.000Z"
         );
       }
     }
-  }, [currentendDate, currentstartDate]);
-
+  }, [continueAssessEndDate, continueAssessStartDate]);
+  console.log(startDate, endDate);
   const { id } = useParams();
   const [carer, setCarer] = useState({});
   useEffect(() => {
@@ -125,6 +125,7 @@ function Evaluate() {
   const outPutRating = Object.values(lastRating)
     .sort((a, b) => a.i - b.i)
     .map(({ i: val }) => val);
+
   // COMPLIED
   const [complied, setcomplied] = useState({
     metricID: "",
@@ -264,20 +265,6 @@ function Evaluate() {
       });
   };
 
-  // Click handler for help button
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const questionID = open ? "simple-popover" : undefined;
-
   return (
     <div className="form--centered">
       <h2>
@@ -286,29 +273,9 @@ function Evaluate() {
       <form onSubmit={submit}>
         {metrics.map((metric) => (
           <>
-            <p style={{ display: "flex" }}>
+            <p>
               <span>{metric.metricNameID}:</span>
               {metric.performanceMetric}
-              <HelpIcon
-                style={{ width: "18px", marginLeft: "5px" }}
-                aria-describedby={questionID}
-                variant="contained"
-                onClick={handleClick}
-              />
-              <Popover
-                id={questionID}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-              >
-                <Typography sx={{ p: 2 }}>
-                  The content of the Popover.
-                </Typography>
-              </Popover>
             </p>
             <div className="ratingCompliedBox">
               <div>

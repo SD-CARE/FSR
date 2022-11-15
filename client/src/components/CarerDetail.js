@@ -126,12 +126,22 @@ function CarerDetail() {
           new Date().toISOString().split("T")[0]
       ) {
         const start = new Date(currentstartDate);
-        start.setDate(start.getDate() + 1);
+        // if start is winter time, add 1 day
+        if (start.getTimezoneOffset() === 0) {
+          start.setDate(start.getDate());
+        } else {
+          start.setDate(start.getDate() + 1);
+        }
         setStartDate(start.toISOString().split("T")[0] + "T00:00:00.000Z");
 
         const end = new Date(currentendDate);
 
-        end.setDate(end.getDate() + 1);
+        if (end.getTimezoneOffset() === 0) {
+          end.setDate(end.getDate());
+        } else {
+          end.setDate(end.getDate() + 1);
+        }
+
         setEndDate(end.toISOString().split("T")[0] + "T23:59:00.000Z");
       } else {
         setStartDate(
@@ -160,7 +170,8 @@ function CarerDetail() {
           endDate,
           region.length === 1
             ? `"${region[0]}"`
-            : region.map((reg) => `"${reg}"`)
+            : region.map((reg) => `"${reg}"`),
+          true
         )
         .then((res) => {
           setClientID(
@@ -171,6 +182,7 @@ function CarerDetail() {
         .catch((err) => console.log(err));
     }
   }, [region]);
+
   // compare the clientID with the clients from cpData
   const [filterOutDisabledClients, setFilterOutDisabledClients] = useState([]);
   useEffect(() => {
