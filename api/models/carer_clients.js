@@ -18,7 +18,10 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     },
-    { timestamps: false, sequelize }
+    {
+      timestamps: false,
+      sequelize,
+    }
   );
 
   return carer_client;

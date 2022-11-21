@@ -11,6 +11,8 @@ export const Provider = (props) => {
   const [sDate] = useState(Cookies.get("sDate"));
   const [eDate] = useState(Cookies.get("eDate"));
   const [careDate] = useState(Cookies.get("careDate"));
+  const [continueStartDate] = useState(Cookies.get("continueStartDate"));
+  const [continueEndDate] = useState(Cookies.get("continueEndDate"));
 
   // create an authenticatedUser instance in state and set it to userCookies if there any
   // else set it to null
@@ -21,12 +23,21 @@ export const Provider = (props) => {
   const [currentstartDate, setCurrentStartDate] = useState(
     sDate ? JSON.parse(sDate) : null
   );
+
   const [currentendDate, setCurrentEndDate] = useState(
     eDate ? JSON.parse(eDate) : null
   );
 
   const [carerDateRange, setCarerDateRange] = useState(
     careDate ? JSON.parse(careDate) : null
+  );
+
+  const [continueAssessStartDate, setContinueAssessStartDate] = useState(
+    continueStartDate ? JSON.parse(continueStartDate) : null
+  );
+
+  const [continueAssessEndDate, setContinueAssessEndDate] = useState(
+    continueEndDate ? JSON.parse(continueEndDate) : null
   );
 
   //   when the component mounts
@@ -53,7 +64,28 @@ export const Provider = (props) => {
         expires: 1,
       });
     }
-  }, [authenticatedUser, currentstartDate, currentendDate, carerDateRange]);
+    if (continueAssessStartDate) {
+      Cookies.set(
+        "continueStartDate",
+        JSON.stringify(continueAssessStartDate),
+        {
+          expires: 1,
+        }
+      );
+    }
+    if (continueAssessEndDate) {
+      Cookies.set("continueEndDate", JSON.stringify(continueAssessEndDate), {
+        expires: 1,
+      });
+    }
+  }, [
+    authenticatedUser,
+    currentstartDate,
+    currentendDate,
+    carerDateRange,
+    continueAssessStartDate,
+    continueAssessEndDate,
+  ]);
   //   store the Data class component in a constant
   // SDData = local database
   // CPData = careplaer database
@@ -78,6 +110,8 @@ export const Provider = (props) => {
   const signOut = () => {
     // set the authenticated user to null and remove the cookies
     setAuthenticatedUser(null);
+    setContinueAssessStartDate(null);
+    setContinueAssessEndDate(null);
     setCurrentStartDate(null);
     setCurrentEndDate(null);
     setCarerDateRange(null);
@@ -86,6 +120,8 @@ export const Provider = (props) => {
     Cookies.remove("eDate");
     Cookies.remove("carerCookies");
     Cookies.remove("careDate");
+    Cookies.remove("continueStartDate");
+    Cookies.remove("continueEndDate");
   };
 
   // NPC Data
@@ -111,6 +147,10 @@ export const Provider = (props) => {
         setRegionsName,
         regionsName,
         NPC,
+        continueAssessStartDate,
+        setContinueAssessStartDate,
+        continueAssessEndDate,
+        setContinueAssessEndDate,
       }}
     >
       {props.children}

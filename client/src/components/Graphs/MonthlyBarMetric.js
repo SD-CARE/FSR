@@ -38,7 +38,19 @@ function MonthlyBarMetric({ carers, date, rating }) {
     Math.random() * 255
   )}, ${Math.floor(Math.random() * 255)})`;
 
-  const labels = [new Date(date)];
+  const labels = [];
+  // remove undefined from the date array
+  date.map((date) => {
+    if (date !== undefined) {
+      let newDate = `${
+        new Date(date).getMonth() + 1
+      }-${new Date().getFullYear()}`;
+      // remove duplicate date
+      if (!labels.includes(newDate)) {
+        labels.push(newDate);
+      }
+    }
+  });
   let data = {
     labels,
     datasets: [],

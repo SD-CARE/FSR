@@ -13,6 +13,7 @@ function UpdateEvaluate() {
   // create the errors instence in state and set it to an empty array
   const [errors, setErrors] = useState([]);
   // GET THE CARER
+
   const [carer, setCarer] = useState();
   useEffect(() => {
     sDData
@@ -23,9 +24,14 @@ function UpdateEvaluate() {
   const [startDate, setStartDate] = useState();
   useEffect(() => {
     const start = new Date(carerDateRange.selection.startDate);
-    start.setDate(start.getDate() + 1);
+    if (start.getTimezoneOffset() === 0) {
+      start.setDate(start.getDate());
+    } else {
+      start.setDate(start.getDate() + 1);
+    }
     setStartDate(start.toISOString().split("T")[0]);
   }, [carerDateRange]);
+
   // Get the metrics from the database
   const [metrics, setMetrics] = useState([]);
   useEffect(() => {
@@ -100,7 +106,7 @@ function UpdateEvaluate() {
           })
         )
       : setRate([]);
-  }, [ratingDate, metrics]);
+  }, [ratingDate, metrics, ratings]);
 
   // get all the compliedMetric
   const [compliedMetric, setCompliedMetric] = useState([]);

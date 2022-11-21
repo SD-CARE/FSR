@@ -126,12 +126,21 @@ function CarerDetail() {
           new Date().toISOString().split("T")[0]
       ) {
         const start = new Date(currentstartDate);
-        start.setDate(start.getDate() + 1);
+        //  if it is winter time keep the time as it is
+        if (start.getTimezoneOffset() === 0) {
+          start.setDate(start.getDate());
+        } else {
+          // if it is summer time add 1 hour to the time
+          start.setDate(start.getDate() + 1);
+        }
         setStartDate(start.toISOString().split("T")[0] + "T00:00:00.000Z");
-
         const end = new Date(currentendDate);
-
-        end.setDate(end.getDate() + 1);
+        if (end.getTimezoneOffset() === 0) {
+          end.setDate(end.getDate());
+        } else {
+          // if it is summer time add 1 hour to the time
+          end.setDate(end.getDate() + 1);
+        }
         setEndDate(end.toISOString().split("T")[0] + "T23:59:00.000Z");
       } else {
         setStartDate(
@@ -149,6 +158,7 @@ function CarerDetail() {
   // Get the current carer's clients
   const [clients, setClients] = useState([]);
   const [clientID, setClientID] = useState([]);
+
   // Get all clients IDs for the current carer
   useEffect(() => {
     // call the "getcarers" method from the data
@@ -160,7 +170,8 @@ function CarerDetail() {
           endDate,
           region.length === 1
             ? `"${region[0]}"`
-            : region.map((reg) => `"${reg}"`)
+            : region.map((reg) => `"${reg}"`),
+          true
         )
         .then((res) => {
           setClientID(

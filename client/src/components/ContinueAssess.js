@@ -4,49 +4,56 @@ import { Context } from "../Context";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 function Evaluate() {
-  const { sDData, currentstartDate, currentendDate, authenticatedUser } =
-    useContext(Context);
+  const {
+    sDData,
+    authenticatedUser,
+    continueAssessEndDate,
+    continueAssessStartDate,
+  } = useContext(Context);
 
   // create exact date string for the appointments
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   useEffect(() => {
-    if (currentendDate !== undefined && currentstartDate !== undefined) {
+    if (
+      continueAssessEndDate !== undefined &&
+      continueAssessStartDate !== undefined
+    ) {
       if (
-        new Date(currentstartDate).toISOString().split("T")[0] !==
-          new Date(currentendDate).toISOString().split("T")[0] ||
-        new Date(currentstartDate).toISOString().split("T")[0] !==
+        new Date(continueAssessStartDate).toISOString().split("T")[0] !==
+          new Date(continueAssessEndDate).toISOString().split("T")[0] ||
+        new Date(continueAssessStartDate).toISOString().split("T")[0] !==
           new Date().toISOString().split("T")[0]
       ) {
-        const start = new Date(currentstartDate);
-        //  if it is winter time keep the time as it is
-        if (start.getTimezoneOffset() === 0) {
+        const start = new Date(continueAssessStartDate);
+        if (start.getMonth() + 1 > 9 || start.getMonth() < 3) {
           start.setDate(start.getDate());
         } else {
-          // if it is summer time add 1 hour to the time
           start.setDate(start.getDate() + 1);
         }
         setStartDate(start.toISOString().split("T")[0] + "T00:00:00.000Z");
-        const end = new Date(currentendDate);
-        if (end.getTimezoneOffset() === 0) {
+
+        const end = new Date(continueAssessEndDate);
+
+        if (end.getMonth() + 1 > 9 || end.getMonth() < 3) {
           end.setDate(end.getDate());
         } else {
-          // if it is summer time add 1 hour to the time
           end.setDate(end.getDate() + 1);
         }
+
         setEndDate(end.toISOString().split("T")[0] + "T23:59:00.000Z");
       } else {
         setStartDate(
-          new Date(currentstartDate).toISOString().split("T")[0] +
+          new Date(continueAssessStartDate).toISOString().split("T")[0] +
             "T00:00:00.000Z"
         );
         setEndDate(
-          new Date(currentendDate).toISOString().split("T")[0] +
+          new Date(continueAssessEndDate).toISOString().split("T")[0] +
             "T23:59:00.000Z"
         );
       }
     }
-  }, [currentendDate, currentstartDate]);
+  }, [continueAssessEndDate, continueAssessStartDate]);
 
   const { id } = useParams();
   const [carer, setCarer] = useState({});
@@ -61,6 +68,8 @@ function Evaluate() {
   useEffect(() => {
     sDData.getMetrics().then((res) => setMetrics(res.metrics));
   }, []);
+
+  console.log(metrics);
 
   // create the errors instence in state and set it to an empty array
   const [errors, setErrors] = useState([]);

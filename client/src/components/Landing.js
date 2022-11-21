@@ -254,7 +254,10 @@ function Landing() {
         </Link>
       </div>
       <div className="performance-metrics-container">
-        <Link to="/dailymetrics" className="carer--module course--link landing">
+        <Link
+          to="/monthlymetrics"
+          className="carer--module course--link landing"
+        >
           Performance Metrics
         </Link>
       </div>

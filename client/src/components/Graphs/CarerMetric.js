@@ -32,7 +32,11 @@ export const CarerMetrics = React.forwardRef((props, ref) => {
   const [startDate, setStartDate] = useState();
   useEffect(() => {
     const start = new Date(carerDateRange.selection.startDate);
-    start.setDate(start.getDate() + 1);
+    if (start.getTimezoneOffset() === 0) {
+      start.setDate(start.getDate());
+    } else {
+      start.setDate(start.getDate() + 1);
+    }
     setStartDate(start.toISOString().split("T")[0]);
   }, [carerDateRange]);
 
@@ -122,7 +126,6 @@ export const CarerMetrics = React.forwardRef((props, ref) => {
             rater !== []
           ) {
             return rater.map((r) => {
-              console.log(r !== null && r !== undefined ? r.ratingName : !r);
               if (r !== null && r !== undefined && r !== [] && r.ratingName) {
                 return r.ratingName[0] && r.ratingName !== []
                   ? r.ratingName[0].rating

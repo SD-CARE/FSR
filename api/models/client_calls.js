@@ -18,7 +18,10 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     },
-    { timestamps: false, sequelize }
+    {
+      timestamps: false,
+      sequelize,
+    }
   );
   client_call.associate = (models) => {
     client_call.belongsTo(models.Carer, {

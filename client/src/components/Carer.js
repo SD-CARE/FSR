@@ -80,7 +80,11 @@ function Carer() {
             return {
               selection: {
                 startDate: addDays(new Date(client.startDate), 0),
-                endDate: addDays(new Date(client.endDate), -1),
+                endDate:
+                  new Date(client.endDate).getMonth() > 9 ||
+                  new Date(client.endDate).getMonth() < 3
+                    ? addDays(new Date(client.endDate), 0)
+                    : addDays(new Date(client.endDate), -1),
                 key: `selection${index}`,
               },
             };
@@ -88,7 +92,6 @@ function Carer() {
         )
       : setState([]);
   }, [filteredCarerClients]);
-
   return carer && state ? (
     <div className="wrapper">
       <div className="carerName">

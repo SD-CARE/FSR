@@ -6,7 +6,13 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import MetricEvaluated from "./MetricEvaluated";
 import { ComponentToPrint } from "./ComponentToPrint";
 export const Evaluated = React.forwardRef((props, ref) => {
-  const { sDData, carerDateRange, authenticatedUser } = useContext(Context);
+  const {
+    sDData,
+    carerDateRange,
+    authenticatedUser,
+    setContinueAssessEndDate,
+    setContinueAssessStartDate,
+  } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
   // GET THE CARER
@@ -63,9 +69,32 @@ export const Evaluated = React.forwardRef((props, ref) => {
   const [startDate, setStartDate] = useState();
   useEffect(() => {
     const start = new Date(carerDateRange.selection.startDate);
-    start.setDate(start.getDate() + 1);
+    if (start.getTimezoneOffset() === 0) {
+      start.setDate(start.getDate());
+    } else {
+      start.setDate(start.getDate() + 1);
+    }
     setStartDate(start.toISOString().split("T")[0]);
   }, [carerDateRange]);
+
+  const [endDate, setEndDate] = useState();
+  useEffect(() => {
+    const end = new Date(carerDateRange.selection.endDate);
+    if (end.getTimezoneOffset() === 0) {
+      end.setDate(end.getDate());
+    } else {
+      end.setDate(end.getDate() + 1);
+    }
+    setEndDate(end.toISOString().split("T")[0]);
+  }, [carerDateRange]);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      setContinueAssessStartDate(startDate + "T00:00:00.000Z");
+      setContinueAssessEndDate(endDate + "T23:59:00.000Z");
+    }
+  }, [startDate, endDate]);
+
   // compair  start date with carerClients start date
   const [date, setDate] = useState([]);
   useEffect(() => {
@@ -80,6 +109,7 @@ export const Evaluated = React.forwardRef((props, ref) => {
         )
       : setDate([]);
   }, [carerClients]);
+
   // Date filter for clients
   const [dateFilter, setDateFilter] = useState([]);
   useEffect(() => {
@@ -575,10 +605,9 @@ export const Evaluated = React.forwardRef((props, ref) => {
         )
       : setComments([]);
   }, [commentDate, complied]);
-
   let currentPerformance = [];
   comments.concat.apply([], comments).map((comment) => {
-    if (comment !== null) {
+    if (comment !== null && comment !== undefined) {
       currentPerformance.push(comment);
       // filter out duplicates
       currentPerformance = currentPerformance.filter(
@@ -671,7 +700,7 @@ export const Evaluated = React.forwardRef((props, ref) => {
                 cursor: "pointer",
                 maxHeight: "50px",
               }}
-              onClick={() => navigate(`/carers/${id}/assess`)}
+              onClick={() => navigate(`/carers/${id}/continueassessment`)}
             >
               Assess Carer
             </button>

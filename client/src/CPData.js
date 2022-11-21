@@ -81,9 +81,9 @@ export default class CPData {
   }
 
   // Get Apointments by carer
-  async appointments(carer, start, end, clientRegions) {
+  async appointments(carer, start, end, clientRegions, excludeCancelled) {
     const response = await this.exAPi(
-      `appointments/?singlecarer=${carer}/appointments&filters={"start":"${start}","end":"${end}","clientRegions":[${clientRegions}]}`
+      `appointments/?singlecarer=${carer}/appointments&filters={"start":"${start}","end":"${end}","clientRegions":[${clientRegions}], "excludeCancelled":${excludeCancelled}}`
     );
     if (response.status === 200) {
       if (response) {

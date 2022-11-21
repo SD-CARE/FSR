@@ -7,10 +7,18 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
       <div className="wrapper">
         <div className="carerName">
           <div className="carerInitials-name">
-            <h3>
+            <span>
               {carer.forename} {carer.surname}
-            </h3>
-            <span className="initial">{carer.initials}</span>
+            </span>
+            <span
+              style={{
+                border: "2px solid black",
+                padding: "8px",
+                borderRadius: "30%",
+              }}
+            >
+              {carer.initials}
+            </span>
           </div>
           <div className="npc">
             <span>NPC: {carer.NPC}</span>
@@ -19,14 +27,14 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
       </div>
       <div>
         <h3 style={{ textAlign: "center", marginTop: "15px" }}>
-          Client List for {startDate}
+          Field Supervision Report for {startDate}
         </h3>
       </div>
       <table class="minimalistBlack">
         <thead>
           <tr>
             <th>Client Name</th>
-            <th>schedule</th>
+            <th>Region</th>
             <th>Calls</th>
             <th>packageOfCare</th>
           </tr>
@@ -43,7 +51,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
                   <td>
                     {client.forename} {client.surname}
                   </td>
-                  <td>{client.regionName}</td>
+                  <td>Schedule {client.regionName}</td>
                   {arrx.length > 0 ? (
                     arrx.map((call, i) =>
                       call !== null && call.clientID === client.clientID ? (
@@ -70,11 +78,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
         </tbody>
       </table>
       {/* Performance Metric Table */}
-      <div>
-        <h3 style={{ textAlign: "center", marginTop: "15px" }}>
-          Performance Metric for {startDate}
-        </h3>
-      </div>
+
       <table class="minimalistBlack">
         <thead>
           <tr>
@@ -105,6 +109,19 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
           ))}
         </tbody>
       </table>
+      <div>
+        <span
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginTop: "20px",
+          }}
+        >
+          <p>Approved by: ___________________</p>
+          <p>Checked by: ___________________</p>
+        </span>
+        <p style={{ marginLeft: "40px" }}>Prepared by: ___________________</p>
+      </div>
     </div>
   );
 });

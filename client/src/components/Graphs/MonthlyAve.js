@@ -168,14 +168,12 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
           (id, index, self) => index === self.findIndex((t) => t === id)
         );
 
-        const date = [...filteredStartDate].map((start) => {
-          if (new Date(start).getMonth() + 1 === parseInt(key)) {
-            return start;
-          }
-        });
-        console.log(...date);
         return {
-          date: key,
+          date: [...filteredStartDate].map((start) => {
+            if (new Date(start).getMonth() + 1 === parseInt(key)) {
+              return start;
+            }
+          }),
           rating: carerRatingsGrouped[key].map((rating) => {
             if (
               rating.rating[0] !== undefined &&
@@ -196,12 +194,10 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
       setAllTheRatingDates(allTheRatingDates);
     }
   }, [carerRatingsGrouped, carers, carer]);
-
   return currcarer !== undefined &&
     currcarer !== null &&
     currcarer.length > 0 ? (
     <div ref={ref} className="wrap">
-      <h2>Monthly Average Performance Metrics</h2>
       <div className="months">
         {allTheRatingDates !== undefined &&
         allTheRatingDates !== null &&

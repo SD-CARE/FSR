@@ -7,6 +7,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../Context";
 import { Link } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Carers() {
   // pull in the data from the context api
@@ -99,7 +100,13 @@ function Carers() {
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
-      <div className="wrap main--grid">
+      <div
+        className={`wrap  ${
+          arr.length > 0 && arr.filter((r) => r.carerID !== null)
+            ? "main--grid"
+            : ""
+        } `}
+      >
         {arr.length > 0 && arr.filter((r) => r.carerID !== null) ? (
           arr
             .filter(
@@ -159,7 +166,15 @@ function Carers() {
               </form>
             ))
         ) : (
-          <h1>loading...</h1>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            <CircularProgress style={{ color: "#5e3a98" }} />
+          </div>
         )}
       </div>
     </>

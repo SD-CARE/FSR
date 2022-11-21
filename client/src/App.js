@@ -22,6 +22,7 @@ import Error from "./components/UnhandledError";
 import { Evaluated } from "./components/Evaluated";
 import UpdateEvaluate from "./components/UpdateEvaluate";
 import MonthlyPrint from "./components/Graphs/MonthlyPrint";
+import ContinueAssess from "./components/ContinueAssess";
 function App() {
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -47,6 +48,12 @@ function App() {
           <Route path="/clients" element={<ClientList />} />
           <Route path="/carers/:id/assess" element={<PrivateRoute />}>
             <Route index element={<Evaluate />} />
+          </Route>
+          <Route
+            path="/carers/:id/continueassessment"
+            element={<PrivateRoute />}
+          >
+            <Route index element={<ContinueAssess />} />
           </Route>
           <Route path="/dailymetrics" element={<PrintDaily />} />
           <Route path="/monthlymetrics" element={<MonthlyPrint />} />

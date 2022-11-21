@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import DailyBarMetric from "./DailyBarMetric";
 import { Context } from "../../Context";
+import CircularProgress from "@mui/material/CircularProgress";
 export const DailyMetric = React.forwardRef((props, ref) => {
   ChartJS.register(
     CategoryScale,
@@ -183,7 +184,6 @@ export const DailyMetric = React.forwardRef((props, ref) => {
     currcarer !== null &&
     currcarer.length > 0 ? (
     <div ref={ref} className="wrap">
-      <h2>Daily Performance Metrics</h2>
       <div className="months">
         {allTheRatingDates !== undefined &&
         allTheRatingDates !== null &&
@@ -196,7 +196,17 @@ export const DailyMetric = React.forwardRef((props, ref) => {
                   key={i}
                   rating={date.rating}
                 />
-              ) : null
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center",
+                  }}
+                >
+                  <CircularProgress style={{ color: "#5e3a98" }} />
+                </div>
+              )
             )
           : null}
       </div>

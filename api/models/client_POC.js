@@ -18,7 +18,10 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     },
-    { timestamps: false, sequelize }
+    {
+      timestamps: false,
+      sequelize,
+    }
   );
   client_POC.associate = (models) => {
     client_POC.belongsTo(models.Carer, {

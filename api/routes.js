@@ -246,7 +246,6 @@ router.post(
     try {
       await carer_region.bulkCreate(req.body, {
         validate: true,
-        ignoreDuplicates: true,
       });
       res.status(201).location(`/carer_region/`).end();
     } catch (err) {
