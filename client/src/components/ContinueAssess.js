@@ -2,13 +2,17 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../Context";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import NoSsr from "@mui/material/NoSsr";
+import HelpIcon from "@mui/icons-material/Help";
 function Evaluate() {
   const {
-    sDData,
+    noAuth,
     authenticatedUser,
     continueAssessEndDate,
     continueAssessStartDate,
+    metricsExplained,
   } = useContext(Context);
 
   // create exact date string for the appointments
@@ -58,7 +62,7 @@ function Evaluate() {
   const { id } = useParams();
   const [carer, setCarer] = useState({});
   useEffect(() => {
-    sDData
+    noAuth
       .getCarer(id)
       .then((res) => setCarer(res.carers))
       .catch((err) => console.log(err));
@@ -66,10 +70,8 @@ function Evaluate() {
   // Get the metrics from the database
   const [metrics, setMetrics] = useState([]);
   useEffect(() => {
-    sDData.getMetrics().then((res) => setMetrics(res.metrics));
+    noAuth.getMetrics().then((res) => setMetrics(res.metrics));
   }, []);
-
-  console.log(metrics);
 
   // create the errors instence in state and set it to an empty array
   const [errors, setErrors] = useState([]);
@@ -80,13 +82,13 @@ function Evaluate() {
   // Get the ratings from the database
   const [ratings, setRatings] = useState([]);
   useEffect(() => {
-    sDData.getRatings().then((res) => setRatings(res.ratings));
+    noAuth.getRatings().then((res) => setRatings(res.ratings));
   }, []);
 
   // Get the complaints from the database
   const [complaints, setComplaints] = useState([]);
   useEffect(() => {
-    sDData.getComplied().then((res) => setComplaints(res.complied));
+    noAuth.getComplied().then((res) => setComplaints(res.complied));
   }, []);
 
   // RATING POST
@@ -220,9 +222,9 @@ function Evaluate() {
   const submit = (e) => {
     e.preventDefault();
     // wait for the user to finish tying before you can save the comment
-    sDData.createMetricRatings(outPutRating);
-    sDData.createMetricComplied(outPutComplied);
-    sDData
+    noAuth.createMetricRatings(outPutRating);
+    noAuth.createMetricComplied(outPutComplied);
+    noAuth
       .createComments(commentData)
       //  then if there is any errors
       .then((errors) => {
@@ -271,18 +273,73 @@ function Evaluate() {
       });
   };
 
+  const [state, setState] = useState({
+    open: false,
+    defer: false,
+  });
+
   return (
     <div className="form--centered">
       <h2>
         Assess {carer.forename} {carer.surname}
       </h2>
       <form onSubmit={submit}>
-        {metrics.map((metric) => (
+        {metrics.map((metric, index) => (
           <>
-            <p>
+            <div key={index} style={{ marginBottom: "25px" }}>
               <span>{metric.metricNameID}:</span>
               {metric.performanceMetric}
-            </p>
+              <HelpIcon
+                style={{ width: "20px", marginLeft: "5px", cursor: "pointer" }}
+                variant="contained"
+                id={index}
+                onClick={(e) =>
+                  setState({
+                    open: !state.open,
+                    defer: true,
+                    current: e.currentTarget.id,
+                  })
+                }
+              />
+              <Box sx={{ width: 500, display: "flex", flexWrap: "wrap" }}>
+                {state.open && parseInt(state.current) === index ? (
+                  <>
+                    <NoSsr defer={state.defer}>
+                      {Object.entries(metricsExplained).map(([key, value]) =>
+                        metric.metricNameID === parseInt(key) ? (
+                          value.length > 1 ? (
+                            value.map((x, i) => (
+                              <Typography
+                                style={{
+                                  margin: "5px",
+                                  fontSize: "16px",
+                                  color: "purple",
+                                }}
+                                key={i}
+                              >
+                                <span>{i + 1}: </span>
+                                {x}
+                              </Typography>
+                            ))
+                          ) : (
+                            <Typography
+                              style={{
+                                margin: "5px",
+                                fontSize: "16px",
+                                color: "purple",
+                              }}
+                              key={key}
+                            >
+                              {value[0]}
+                            </Typography>
+                          )
+                        ) : null
+                      )}
+                    </NoSsr>
+                  </>
+                ) : null}
+              </Box>
+            </div>
             <div className="ratingCompliedBox">
               <div>
                 <label htmlFor="rating">Rating</label>

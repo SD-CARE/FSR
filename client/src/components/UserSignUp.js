@@ -12,7 +12,7 @@ import { Context } from "../Context";
 
 function UserSignUp() {
   // pull in the data and signIn methods from the context
-  const { sDData, signIn } = useContext(Context);
+  const { noAuth, signIn } = useContext(Context);
   // create a user instence in the component state and set it to an object
   const [user, setUser] = useState({
     firstName: "",
@@ -38,7 +38,7 @@ function UserSignUp() {
   // create the submit function
   const submit = () => {
     //  get the createUser method from context and pass the user object as a param
-    sDData
+    noAuth
       .createUser(user)
       //  then if there is any errors
       .then((errors) => {

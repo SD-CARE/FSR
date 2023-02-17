@@ -22,45 +22,6 @@ const {
 const { asyncHandler } = require("./middleware/asyncHandler");
 const { userAuthentication } = require("./middleware/userAuthentication");
 const fs = require("fs");
-// Routes for Authenticated Users
-//Create a User
-router.post(
-  "/users",
-  asyncHandler(async (req, res) => {
-    try {
-      await User.create(req.body);
-      res.status(201).location("/").end();
-    } catch (err) {
-      if (
-        err.name === "SequelizeValidationError" ||
-        err.name === "SequelizeUniqueConstraintError"
-      ) {
-        const errors = err.errors.map((er) => er.message);
-        res.status(400).json({ errors });
-      } else {
-        throw err;
-      }
-    }
-  })
-);
-// Get a User
-router.get(
-  "/users",
-  userAuthentication,
-  asyncHandler(async (req, res) => {
-    try {
-      const user = req.currentUser;
-      res.status(200).json({
-        userID: user.userID,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        emailAddress: user.emailAddress,
-      });
-    } catch (err) {
-      throw err;
-    }
-  })
-);
 
 // Route to JSON file
 router.post(
@@ -246,6 +207,7 @@ router.post(
     try {
       await carer_region.bulkCreate(req.body, {
         validate: true,
+        ignoreDuplicates: true,
       });
       res.status(201).location(`/carer_region/`).end();
     } catch (err) {
@@ -435,6 +397,7 @@ router.post(
     try {
       await client_region.bulkCreate(req.body, {
         validate: true,
+        ignoreDuplicates: true,
       });
       res.status(201).location(`/client_region/`).end();
     } catch (err) {
@@ -463,6 +426,7 @@ router.post(
     try {
       await client_call.bulkCreate(req.body, {
         validate: true,
+        ignoreDuplicates: true,
       });
       res.status(201).location(`/client_calls/`).end();
     } catch (err) {
@@ -491,6 +455,7 @@ router.post(
     try {
       await client_POC.bulkCreate(req.body, {
         validate: true,
+        ignoreDuplicates: true,
       });
       res.status(201).location(`/client_poc/`).end();
     } catch (err) {
@@ -701,6 +666,7 @@ router.post(
     try {
       await carer_client.bulkCreate(req.body, {
         validate: true,
+        ignoreDuplicates: true,
       });
       res.status(201).location(`/carer_client/`).end();
     } catch (err) {

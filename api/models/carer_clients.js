@@ -19,8 +19,9 @@ module.exports = (sequelize) => {
       },
     },
     {
-      timestamps: false,
       sequelize,
+
+      timestamps: false,
     }
   );
 

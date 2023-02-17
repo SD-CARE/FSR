@@ -25,25 +25,25 @@ export const DailyMetric = React.forwardRef((props, ref) => {
     Legend
   );
   const [carers, setCarers] = useState([]);
-  const { sDData } = useContext(Context);
+  const { noAuth } = useContext(Context);
 
   // when the component is mounted
   useEffect(() => {
-    sDData
+    noAuth
       .getCarers()
       .then((carer) => setCarers(carer.carers.map((carer) => carer)));
-  }, [sDData]);
+  }, [noAuth]);
 
   // Get the ratings from the database
   const [ratings, setRatings] = useState([]);
   useEffect(() => {
-    sDData.getRatings().then((res) => setRatings(res.ratings));
+    noAuth.getRatings().then((res) => setRatings(res.ratings));
   }, []);
 
   // get all metricRating
   const [metricRating, setMetricRating] = useState([]);
   useEffect(() => {
-    sDData.getMetricRatings().then((res) => setMetricRating(res.metric));
+    noAuth.getMetricRatings().then((res) => setMetricRating(res.metric));
   }, []);
 
   // compare the metricRating with the current carer

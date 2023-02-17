@@ -4,7 +4,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../Context";
 function Landing() {
-  const { sDData, cPData, NPC } = useContext(Context);
+  const { noAuth, cPData, NPC } = useContext(Context);
 
   // GET ALL CLIENTS
   const [clients, setclients] = useState([]);
@@ -106,7 +106,7 @@ function Landing() {
 
   useEffect(() => {
     if (carersWithNPC.length !== undefined) {
-      sDData.createCarers(
+      noAuth.createCarers(
         carersWithNPC.filter((carer) => {
           return carer !== undefined;
         })
@@ -134,7 +134,7 @@ function Landing() {
   }, [clients]);
 
   useEffect(() => {
-    client ? sDData.createClients(client) : console.log("No clients");
+    client ? noAuth.createClients(client) : console.log("No clients");
   }, [client]);
 
   // Create POC
@@ -168,7 +168,7 @@ function Landing() {
   }, [poc]);
 
   useEffect(() => {
-    if (pocObject.length >= 1) sDData.createPOC(pocObject);
+    if (pocObject.length >= 1) noAuth.createPOC(pocObject);
   }, [pocObject]);
 
   // Create calls
@@ -191,7 +191,7 @@ function Landing() {
 
   useEffect(() => {
     if (callsObject.length >= 1) {
-      sDData.createCalls(callsObject);
+      noAuth.createCalls(callsObject);
     }
   }, [callsObject]);
 
@@ -215,7 +215,7 @@ function Landing() {
 
   useEffect(() => {
     if (ratingsObject.length >= 1) {
-      sDData.createRatings(ratingsObject);
+      noAuth.createRatings(ratingsObject);
     }
   }, [ratingsObject]);
 
@@ -239,7 +239,7 @@ function Landing() {
 
   useEffect(() => {
     if (compliedObject.length >= 1) {
-      sDData.createComplied(compliedObject);
+      noAuth.createComplied(compliedObject);
     }
   }, [compliedObject]);
 

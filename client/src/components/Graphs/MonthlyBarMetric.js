@@ -40,11 +40,10 @@ function MonthlyBarMetric({ carers, date, rating }) {
 
   const labels = [];
   // remove undefined from the date array
-  date.map((date) => {
-    if (date !== undefined) {
-      let newDate = `${
-        new Date(date).getMonth() + 1
-      }-${new Date().getFullYear()}`;
+  date?.map((date) => {
+    let splitDate = date?.split("-");
+    if (splitDate) {
+      let newDate = `${splitDate[1]}-${splitDate[0]}`;
       // remove duplicate date
       if (!labels.includes(newDate)) {
         labels.push(newDate);
@@ -91,8 +90,8 @@ function MonthlyBarMetric({ carers, date, rating }) {
     );
   }, [manyCarersRating]);
 
-  carers.length > 1 && carers !== null && carers !== undefined
-    ? carers.map((carer, i) => {
+  carers.length > 1
+    ? carers?.map((carer, i) => {
         // give each carer a unique dark color
         // reduce the rating and / the sum by 12
         carer[0] !== null && carer[0] !== undefined
@@ -109,12 +108,10 @@ function MonthlyBarMetric({ carers, date, rating }) {
           : console.log("carer is null");
       })
     : data.datasets.push({
-        label: carers.map((carer) =>
-          carer[0] !== null && carer[0] !== undefined
-            ? carer[0].forename + " " + carer[0].initials
-            : null
+        label: carers?.map(
+          (carer) => carer[0]?.forename + " " + carer[0]?.initials
         ),
-        data: [filteredRating],
+        data: [(reducedRate[0] + reducedRate[1]) / 2],
         borderColor: color,
         backgroundColor: color,
       });

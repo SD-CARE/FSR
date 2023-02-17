@@ -19,10 +19,13 @@ import Carer from "./components/Carer";
 import Forbidden from "./components/Forbidden";
 import NotFound from "./components/Notfound";
 import Error from "./components/UnhandledError";
+import ClientSelectionError from "./components/ClientSelectionError";
 import { Evaluated } from "./components/Evaluated";
 import UpdateEvaluate from "./components/UpdateEvaluate";
 import MonthlyPrint from "./components/Graphs/MonthlyPrint";
 import ContinueAssess from "./components/ContinueAssess";
+import Help from "./components/Help";
+import DownloadAverage from "./components/DownloadCarerAv";
 function App() {
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -32,6 +35,7 @@ function App() {
     <Router>
       <div>
         <Header />
+        <Help />
         <Routes>
           <Route path="/carers/:id/assessed/select" element={<Carer />} />
           <Route path="/carers/:id/date" element={<PrivateRoute />}>
@@ -66,7 +70,12 @@ function App() {
             <Route index element={<UpdateEvaluate />} />
           </Route>
           <Route path="/error" element={<Error />} />
+          <Route
+            path="/clientselectionerror"
+            element={<ClientSelectionError />}
+          />
           <Route path="/forbidden" element={<Forbidden />} />
+          <Route path="/download" element={<DownloadAverage />} />
           <Route path="*" element={<NotFound />} />
           <Route
             path="/carers/:id/assessed/detail"

@@ -7,7 +7,14 @@ import { Context } from "../Context";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 function UpdateEvaluate() {
-  const { sDData, carerDateRange, authenticatedUser } = useContext(Context);
+  const {
+    noAuth,
+    carerDateRange,
+    authenticatedUser,
+    updateComments,
+    updateMetricComplied,
+    updateMetricRating,
+  } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
   // create the errors instence in state and set it to an empty array
@@ -16,7 +23,7 @@ function UpdateEvaluate() {
 
   const [carer, setCarer] = useState();
   useEffect(() => {
-    sDData
+    noAuth
       .getCarer(id)
       .then((res) => setCarer(res.carers))
       .catch((err) => console.log(err));
@@ -35,25 +42,25 @@ function UpdateEvaluate() {
   // Get the metrics from the database
   const [metrics, setMetrics] = useState([]);
   useEffect(() => {
-    sDData.getMetrics().then((res) => setMetrics(res.metrics));
+    noAuth.getMetrics().then((res) => setMetrics(res.metrics));
   }, []);
 
   // Get the ratings from the database
   const [ratings, setRatings] = useState([]);
   useEffect(() => {
-    sDData.getRatings().then((res) => setRatings(res.ratings));
+    noAuth.getRatings().then((res) => setRatings(res.ratings));
   }, []);
 
   // Get the complaints from the database
   const [complaints, setComplaints] = useState([]);
   useEffect(() => {
-    sDData.getComplied().then((res) => setComplaints(res.complied));
+    noAuth.getComplied().then((res) => setComplaints(res.complied));
   }, []);
 
   // get all metricRating
   const [metricRating, setMetricRating] = useState([]);
   useEffect(() => {
-    sDData.getMetricRatings().then((res) => setMetricRating(res.metric));
+    noAuth.getMetricRatings().then((res) => setMetricRating(res.metric));
   }, []);
 
   // compare the metricRating with the current carer
@@ -111,7 +118,7 @@ function UpdateEvaluate() {
   // get all the compliedMetric
   const [compliedMetric, setCompliedMetric] = useState([]);
   useEffect(() => {
-    sDData.getMetricComplied().then((res) => setCompliedMetric(res.metric));
+    noAuth.getMetricComplied().then((res) => setCompliedMetric(res.metric));
   }, []);
 
   // compare the metricRating with the current carer
@@ -178,7 +185,7 @@ function UpdateEvaluate() {
   // get all the metricsComments
   const [metricsComments, setMetricComments] = useState([]);
   useEffect(() => {
-    sDData.getComments().then((res) => setMetricComments(res.comments));
+    noAuth.getComments().then((res) => setMetricComments(res.comments));
   }, []);
   // compare the metricRating with the current carer
   const [carerComments, setCareComments] = useState();
@@ -255,7 +262,7 @@ function UpdateEvaluate() {
     endDate: "",
     ratingID: "",
     carerID: "",
-    userID: authenticatedUser.userID,
+    userID: authenticatedUser.id,
   });
   updateRating.carerID = carer ? carer.carerID : null;
   updateRating.startDate = carerDateRange.selection.startDate;
@@ -298,7 +305,7 @@ function UpdateEvaluate() {
     metricID: "",
     endDate: "",
     carerID: "",
-    userID: authenticatedUser.userID,
+    userID: authenticatedUser.id,
   });
   updateComplied.carerID = carer ? carer.carerID : null;
   updateComplied.startDate = carerDateRange.selection.startDate;
@@ -336,23 +343,19 @@ function UpdateEvaluate() {
     .map(({ i: val }) => val);
 
   // COMMENT POST
-  // Declare a timer
-  let timer;
+
   const [comment, setComment] = useState([]);
   const [currentMetric, setCurrentMetric] = useState();
   // Create a function to handle the comment post
   const handleComment = (e) => {
     e.preventDefault();
-    clearTimeout(timer);
-    // wait for 1 second before posting the comment
-    timer = setTimeout(() => {
-      const { name, value } = e.target;
-      setComment((comment) => ({
-        ...comment,
-        [name]: value,
-      }));
-      setCurrentMetric(parseInt(e.target.id));
-    }, 500);
+
+    const { name, value } = e.target;
+    setComment((comment) => ({
+      ...comment,
+      [name]: value,
+    }));
+    setCurrentMetric(parseInt(e.target.id));
   };
 
   // create an object to store the comment data
@@ -368,7 +371,7 @@ function UpdateEvaluate() {
           startDate: carerDateRange.selection.startDate,
           endDate: carerDateRange.selection.endDate,
           carerID: carer.carerID,
-          userID: authenticatedUser.userID,
+          userID: authenticatedUser.id,
           metricID: currentMetric,
         };
       }),
@@ -378,11 +381,9 @@ function UpdateEvaluate() {
   const submit = (e) => {
     e.preventDefault();
     // wait for the user to finish tying before you can save the comment
-    sDData.updateMetricRating(outPutRating, authenticatedUser);
-    sDData.updateMetricComplied(outPutComplied, authenticatedUser);
-    if (commentData.length > 0)
-      sDData.updateComments(commentData, authenticatedUser);
-
+    updateMetricRating(outPutRating);
+    updateMetricComplied(outPutComplied);
+    if (commentData.length > 0) updateComments(commentData);
     navigate(`/carers/${id}/assessed/detail`)
       .then((errors) => {
         // set the errors array to display them
@@ -400,7 +401,7 @@ function UpdateEvaluate() {
         <div className="carerName">
           <div className="carerInitials-name">
             <h3>
-              {carer.forename} {carer.surname}
+              {carer?.forename} {carer?.surname}
             </h3>
             <span className="initial">{carer.initials}</span>
           </div>

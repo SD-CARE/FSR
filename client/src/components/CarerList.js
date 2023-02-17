@@ -11,13 +11,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 function Carers() {
   // pull in the data from the context api
-  const { setRegionsName, sDData, cPData } = useContext(Context);
+  const { setRegionsName, noAuth, cPData } = useContext(Context);
   const [query, setQuery] = useState("");
 
   // get all the carers from the api
   const [carers, setCarers] = useState();
   useEffect(() => {
-    sDData.getCarers().then((carers) => {
+    noAuth.getCarers().then((carers) => {
       setCarers(carers.carers);
     });
   }, []);
@@ -35,14 +35,14 @@ function Carers() {
   }, []);
 
   useEffect(() => {
-    sDData.getCarers();
+    noAuth.getCarers();
   });
 
   // merge allCarers and carers into one object
   const [mergedCarers] = useState([]);
   useEffect(() => {
     Object.entries(allCarers).filter(([key, value]) => {
-      carers.forEach((carer) =>
+      carers?.forEach((carer) =>
         carer.CPID === value.identifier
           ? mergedCarers.push({
               carerID: carer.carerID,
@@ -88,7 +88,7 @@ function Carers() {
 
   // CREATE ALL REGIONS IN OUR DATABASE
   useEffect(() => {
-    if (regions.length >= 1) sDData.createRegions(regions);
+    if (regions.length >= 1) noAuth.createRegions(regions);
   }, [regions]);
 
   return (

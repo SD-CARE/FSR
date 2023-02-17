@@ -23,6 +23,20 @@ module.exports = {
       },
     },
   },
+
+  dialectOptions: {
+    client: "pg",
+    bigNumberStrings: true,
+    socketPath: process.env.INSTANCE_UNIX_SOCKET,
+    ssl: {
+      require: true,
+      sslmode: "verify-ca",
+      rejectUnauthorized: false,
+      ca: fs.readFileSync(__dirname + "/server-ca.pem"),
+      key: fs.readFileSync(__dirname + "/client-key.pem"),
+      cert: fs.readFileSync(__dirname + "/client-cert.pem"),
+    },
+  },
   test: {
     username: process.env.CI_DB_USERNAME,
     password: process.env.CI_DB_PASSWORD,

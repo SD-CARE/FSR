@@ -92,6 +92,14 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     });
+
+    Carer.hasMany(models.client_POC, {
+      as: "carerClientPOC",
+      foreignKey: {
+        fieldName: "carerID",
+        allowNull: false,
+      },
+    });
   };
   return Carer;
 };

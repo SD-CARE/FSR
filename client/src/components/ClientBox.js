@@ -2,7 +2,7 @@
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 
-function ClientBox({ carerClients, carer, change, select, calls, poc }) {
+function ClientBox({ carerClients, change, select, calls, poc }) {
   return (
     <>
       {carerClients &&
@@ -22,9 +22,13 @@ function ClientBox({ carerClients, carer, change, select, calls, poc }) {
                       ? client.regions[0].regions[0].name.split(" ")[1]
                       : client.regions[0].regions[0].name
                     : client.regions[0].regions.map((region, i) => {
-                        return region.name.includes("Schedule")
-                          ? `${region.name.split(" ")[1]} | `
-                          : region.name;
+                        return region.name.includes("Schedule") ? (
+                          <div style={{ display: "inline" }} key={i}>{`${
+                            region.name.split(" ")[1]
+                          } | `}</div>
+                        ) : (
+                          region.name
+                        );
                       })
                   : null}
               </span>
@@ -32,8 +36,8 @@ function ClientBox({ carerClients, carer, change, select, calls, poc }) {
             <div className="client-calls">
               <div className="clientData">
                 <div className="calls">
-                  <span>Calls:</span>
-                  {calls.map((call, i) => {
+                  <span>Calls: </span>
+                  {/* {calls.map((call, i) => {
                     return (
                       <>
                         <input
@@ -47,7 +51,27 @@ function ClientBox({ carerClients, carer, change, select, calls, poc }) {
                         <label>{call.call[0]}</label>
                       </>
                     );
-                  })}
+                  })} */}
+                  <select
+                    // className="POC"
+                    style={{
+                      marginBottom: "0px",
+                      marginLeft: "10px",
+                      padding: "5px",
+                    }}
+                    onChange={change}
+                    name="callID"
+                    id={client.id}
+                  >
+                    <option value="">Choose...</option>
+                    {calls.map((call, i) => {
+                      return (
+                        <option key={i} value={call.callID}>
+                          {call.call}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
                 <select
                   className="POC"

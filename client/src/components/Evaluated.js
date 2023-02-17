@@ -5,9 +5,10 @@ import { Context } from "../Context";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import MetricEvaluated from "./MetricEvaluated";
 import { ComponentToPrint } from "./ComponentToPrint";
+import DownloadAve from "./DownloadCarerAv";
 export const Evaluated = React.forwardRef((props, ref) => {
   const {
-    sDData,
+    noAuth,
     carerDateRange,
     authenticatedUser,
     setContinueAssessEndDate,
@@ -15,51 +16,54 @@ export const Evaluated = React.forwardRef((props, ref) => {
   } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
+  // create "isEditing" to hold the boolean value in state
+  const [isEditing, setIsEditing] = useState(false);
   // GET THE CARER
   const [carer, setCarer] = useState();
   useEffect(() => {
-    sDData
+    noAuth
       .getCarer(id)
-      .then((res) => setCarer(res.carers))
+      .then((res) => setCarer(res?.carers))
       .catch((err) => console.log(err));
   }, [id]);
 
   // get all clients from the database
   const [clients, setClients] = useState([]);
   useEffect(() => {
-    sDData.getClients().then((res) => setClients(res.clients));
+    noAuth.getClients().then((res) => setClients(res?.clients));
   }, []);
 
   // get client_regions
   const [clientRegion, setClientRegions] = useState();
   useEffect(() => {
-    sDData
+    noAuth
       .getClientRegion()
-      .then((res) => setClientRegions(res.client_regions));
+      .then((res) => setClientRegions(res?.client_regions));
   }, []);
 
   // Get all the regions from the database
   const [regions, setRegions] = useState([]);
   useEffect(() => {
-    sDData.getRegions().then((res) => setRegions(res.regions));
+    noAuth.getRegions().then((res) => setRegions(res?.regions));
     setRegions([]);
   }, []);
 
   // get all carer_clients
   const [carerClients, setCarerClients] = useState();
   useEffect(() => {
-    sDData
+    noAuth
       .getCarerClients()
       .then((res) =>
         setCarerClients(
-          res.carer_clients.filter(
+          res?.carer_clients.filter(
             (value, index, self) =>
               index ===
               self.findIndex(
                 (t) =>
                   t.clientID === value.clientID &&
                   t.startDate === value.startDate &&
-                  t.endDate === value.endDate
+                  t.endDate === value.endDate &&
+                  t.carerID === value.carerID
               )
           )
         )
@@ -216,13 +220,13 @@ export const Evaluated = React.forwardRef((props, ref) => {
   // get all the calls from the database
   const [calls, setCalls] = useState();
   useEffect(() => {
-    sDData.getCalls().then((res) => setCalls(res.calls));
+    noAuth.getCalls().then((res) => setCalls(res.calls));
   }, []);
 
   // get all client_calls from the database
   const [clientCalls, setClientCalls] = useState();
   useEffect(() => {
-    sDData.getClientCalls().then((res) => setClientCalls(res.client_calls));
+    noAuth.getClientCalls().then((res) => setClientCalls(res.client_calls));
   }, []);
 
   // compare the clientCalls with the current carer
@@ -289,13 +293,13 @@ export const Evaluated = React.forwardRef((props, ref) => {
   // get all  the packageOfCare from the database
   const [packageOfCare, setPackageOfCare] = useState();
   useEffect(() => {
-    sDData.getPOC().then((res) => setPackageOfCare(res.poc));
+    noAuth.getPOC().then((res) => setPackageOfCare(res.poc));
   }, []);
 
   // get all the client_poc from the database
   const [clientPOC, setClientPOC] = useState();
   useEffect(() => {
-    sDData.getClientPOC().then((res) => setClientPOC(res.client_poc));
+    noAuth.getClientPOC().then((res) => setClientPOC(res.client_poc));
   }, []);
 
   // compare the clientCalls with the current carer
@@ -398,29 +402,30 @@ export const Evaluated = React.forwardRef((props, ref) => {
   // Get the metrics from the database
   const [metrics, setMetrics] = useState([]);
   useEffect(() => {
-    sDData.getMetrics().then((res) => setMetrics(res.metrics));
+    noAuth.getMetrics().then((res) => setMetrics(res.metrics));
   }, []);
 
   // Get the ratings from the database
   const [ratings, setRatings] = useState([]);
   useEffect(() => {
-    sDData.getRatings().then((res) => setRatings(res.ratings));
+    noAuth.getRatings().then((res) => setRatings(res.ratings));
   }, []);
 
   // Get the complaints from the database
   const [complaints, setComplaints] = useState([]);
   useEffect(() => {
-    sDData.getComplied().then((res) => setComplaints(res.complied));
+    noAuth.getComplied().then((res) => setComplaints(res.complied));
   }, []);
 
   // get all metricRating
-  const [metricRating, setMetricRating] = useState([]);
-  useEffect(() => {
-    sDData.getMetricRatings().then((res) => setMetricRating(res.metric));
-  }, []);
-
-  // compare the metricRating with the current carer
+  const [metricRating, setMetricRating] = useState();
   const [carerRating, setCareRating] = useState();
+  useEffect(() => {
+    noAuth.getMetricRatings().then((res) => {
+      setMetricRating(res.metric);
+    });
+  }, [isEditing]);
+
   useEffect(() => {
     metricRating !== undefined && metricRating !== null
       ? setCareRating(
@@ -477,13 +482,15 @@ export const Evaluated = React.forwardRef((props, ref) => {
       : setRate([]);
   }, [ratingDate, metrics, ratings]);
   // get all the compliedMetric
-  const [compliedMetric, setCompliedMetric] = useState([]);
-  useEffect(() => {
-    sDData.getMetricComplied().then((res) => setCompliedMetric(res.metric));
-  }, []);
-
-  // compare the metricRating with the current carer
+  const [compliedMetric, setCompliedMetric] = useState();
   const [carerComplied, setCareComplied] = useState();
+  useEffect(() => {
+    noAuth.getMetricComplied().then((res) => {
+      setCompliedMetric(res.metric);
+    });
+    // }
+  }, [isEditing]);
+
   useEffect(() => {
     compliedMetric !== undefined && compliedMetric !== null
       ? setCareComplied(
@@ -544,8 +551,8 @@ export const Evaluated = React.forwardRef((props, ref) => {
   // get all the metricsComments
   const [metricsComments, setMetricComments] = useState([]);
   useEffect(() => {
-    sDData.getComments().then((res) => setMetricComments(res.comments));
-  }, []);
+    noAuth.getComments().then((res) => setMetricComments(res.comments));
+  }, [isEditing]);
 
   // compare the metricRating with the current carer
   const [carerComments, setCareComments] = useState();
@@ -622,16 +629,13 @@ export const Evaluated = React.forwardRef((props, ref) => {
     }
   });
 
-  // create "isEditing" to hold the boolean value in state
-  const [isEditing, setIsEditing] = useState(false);
   // as soon as the app mounts to the DOM
   useEffect(() => {
-    //   if the course, user, course.userId are === to the current user'id
     if (currentPerformance && authenticatedUser) {
       currentPerformance.filter((user) =>
         user !== null &&
         user !== undefined &&
-        user.userID === authenticatedUser.userID
+        user.userID === authenticatedUser.id
           ? setIsEditing(true)
           : setIsEditing(false)
       );
@@ -655,6 +659,9 @@ export const Evaluated = React.forwardRef((props, ref) => {
           </div>
           <div className="npc">
             <span>NPC: {carer.NPC}</span>
+          </div>
+          <div className="downloadAverageBtn">
+            <DownloadAve currentCarer={carer} currentDate={startDate} />
           </div>
         </div>
       </div>
@@ -723,6 +730,7 @@ export const Evaluated = React.forwardRef((props, ref) => {
           >
             Print
           </button>
+
           <Link
             to={`/carers/${id}/assessed/select`}
             className="button button-secondary"

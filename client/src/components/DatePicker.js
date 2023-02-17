@@ -10,7 +10,7 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 function DatePicker() {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const { setCurrentEndDate, setCurrentStartDate, sDData } =
+  const { setCurrentEndDate, setCurrentStartDate, noAuth } =
     useContext(Context);
 
   const selectionRange = {
@@ -33,7 +33,7 @@ function DatePicker() {
   const [carer, setCarer] = useState({});
   // Get the current carer from the our api
   useEffect(() => {
-    sDData
+    noAuth
       .getCarer(id)
       .then((res) => setCarer(res.carers))
       .catch((err) => console.log(err));

@@ -18,7 +18,10 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
     },
-    { sequelize }
+
+    {
+      sequelize,
+    }
   );
   return client_region;
 };

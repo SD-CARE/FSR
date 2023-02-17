@@ -1,13 +1,28 @@
 {
   "files": {
-    "main.css": "/static/css/main.fdc5bb20.css",
-    "main.js": "/static/js/main.f08c5317.js",
+    "main.css": "/static/css/main.38a792f2.css",
+    "main.js": "/static/js/main.7d7e1696.js",
+    "static/media/assessedpage.png": "/static/media/assessedpage.ca820b02fbd431b9fbfb.png",
+    "static/media/clientlist.png": "/static/media/clientlist.963bb6d45bff5cae15c5.png",
+    "static/media/dailymetric.png": "/static/media/dailymetric.33a3a7545a3caa1f3f43.png",
+    "static/media/metricdetail.png": "/static/media/metricdetail.111b856481ab8d45cf09.png",
+    "static/media/metricerror.png": "/static/media/metricerror.72f07304f823879bf92b.png",
+    "static/media/bluedate.png": "/static/media/bluedate.206d24623e9f5832a5ee.png",
+    "static/media/npcpage.png": "/static/media/npcpage.0d6819b4e37a6fefba40.png",
+    "static/media/assesscalender.png": "/static/media/assesscalender.66f24e3929528de47433.png",
+    "static/media/carers.png": "/static/media/carers.1f922e835bc0427dd981.png",
+    "static/media/clienterror.png": "/static/media/clienterror.e60829636ad20ba0f85e.png",
+    "static/media/assessedcarer.png": "/static/media/assessedcarer.fcd7e203260f69a4b143.png",
+    "static/media/landing.png": "/static/media/landing.8cd57be7ee098650b752.png",
+    "static/media/wrongroute.png": "/static/media/wrongroute.72f5fa03c5b21bab49fc.png",
+    "static/media/carername.png": "/static/media/carername.7d600ff310b038cf8608.png",
+    "static/media/assessback.png": "/static/media/assessback.8e825e89a62d35c41176.png",
     "index.html": "/index.html",
-    "main.fdc5bb20.css.map": "/static/css/main.fdc5bb20.css.map",
-    "main.f08c5317.js.map": "/static/js/main.f08c5317.js.map"
+    "main.38a792f2.css.map": "/static/css/main.38a792f2.css.map",
+    "main.7d7e1696.js.map": "/static/js/main.7d7e1696.js.map"
   },
   "entrypoints": [
-    "static/css/main.fdc5bb20.css",
-    "static/js/main.f08c5317.js"
+    "static/css/main.38a792f2.css",
+    "static/js/main.7d7e1696.js"
   ]
 }

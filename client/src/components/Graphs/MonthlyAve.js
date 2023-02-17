@@ -24,26 +24,26 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
     Legend
   );
   const [carers, setCarers] = useState([]);
-  const { sDData } = useContext(Context);
+  const { noAuth } = useContext(Context);
 
   // when the component is mounted
   //   get all the carers from database
   useEffect(() => {
-    sDData
+    noAuth
       .getCarers()
       .then((carer) => setCarers(carer.carers.map((carer) => carer)));
-  }, [sDData]);
+  }, [noAuth]);
 
   // Get the ratings from the database
   const [ratings, setRatings] = useState([]);
   useEffect(() => {
-    sDData.getRatings().then((res) => setRatings(res.ratings));
+    noAuth.getRatings().then((res) => setRatings(res.ratings));
   }, []);
 
   // get all metricRating
   const [metricRating, setMetricRating] = useState([]);
   useEffect(() => {
-    sDData.getMetricRatings().then((res) => setMetricRating(res.metric));
+    noAuth.getMetricRatings().then((res) => setMetricRating(res.metric));
   }, []);
 
   // compare the metricRating with the carers
@@ -174,7 +174,7 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
               return start;
             }
           }),
-          rating: carerRatingsGrouped[key].map((rating) => {
+          rating: carerRatingsGrouped[key]?.map((rating) => {
             if (
               rating.rating[0] !== undefined &&
               rating.rating[0] !== null &&
@@ -184,7 +184,7 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
               return rating.rating[0].rating;
             }
           }),
-          carer: carer.map((id) => {
+          carer: carer?.map((id) => {
             return carers.filter((carerName) =>
               carerName.carerID === id ? carerName : null
             );
@@ -194,6 +194,7 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
       setAllTheRatingDates(allTheRatingDates);
     }
   }, [carerRatingsGrouped, carers, carer]);
+
   return currcarer !== undefined &&
     currcarer !== null &&
     currcarer.length > 0 ? (
@@ -202,7 +203,7 @@ export const MonthlyAve = React.forwardRef((props, ref) => {
         {allTheRatingDates !== undefined &&
         allTheRatingDates !== null &&
         allTheRatingDates.length > 0
-          ? allTheRatingDates.map((date, i) =>
+          ? allTheRatingDates?.map((date, i) =>
               date !== undefined ? (
                 <MonthlyBarMetric
                   carers={date.carer}

@@ -5,7 +5,7 @@ import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { Context } from "../Context";
 
 function NewCarerNPC() {
-  const { sDData, cPData } = useContext(Context);
+  const { noAuth, cPData } = useContext(Context);
 
   const [currentCarer, setCurrentCarer] = useState();
   const { id } = useParams();
@@ -47,7 +47,7 @@ function NewCarerNPC() {
   const submit = (e) => {
     e.preventDefault();
 
-    sDData
+    noAuth
       .createCarers([carer])
       .then((errors) => {
         // set the errors array to display them

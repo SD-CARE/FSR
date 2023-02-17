@@ -30,7 +30,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
           Field Supervision Report for {startDate}
         </h3>
       </div>
-      <table class="minimalistBlack">
+      <table className="minimalistBlack">
         <thead>
           <tr>
             <th>Client Name</th>
@@ -73,13 +73,13 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
                 </tr>
               ))
           ) : (
-            <p>{array.forename}</p>
+            <td>{array.forename}</td>
           )}
         </tbody>
       </table>
       {/* Performance Metric Table */}
 
-      <table class="minimalistBlack">
+      <table className="minimalistBlack">
         <thead>
           <tr>
             <th>Number</th>
@@ -114,7 +114,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
           style={{
             display: "flex",
             justifyContent: "space-around",
-            marginTop: "20px",
+            marginTop: "16px",
           }}
         >
           <p>Approved by: ___________________</p>

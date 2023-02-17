@@ -26,7 +26,7 @@ export const CarerMetrics = React.forwardRef((props, ref) => {
   );
   const { id } = useParams();
   const [carer, setCarer] = useState([]);
-  const { sDData, carerDateRange } = useContext(Context);
+  const { noAuth, carerDateRange } = useContext(Context);
 
   // get the carer date
   const [startDate, setStartDate] = useState();
@@ -42,25 +42,25 @@ export const CarerMetrics = React.forwardRef((props, ref) => {
 
   // when the component is mounted
   useEffect(() => {
-    sDData.getCarer(id).then((carer) => setCarer(carer.carers));
+    noAuth.getCarer(id).then((carer) => setCarer(carer.carers));
   }, []);
 
   // get the metrics from the database
   const [metrics, setMetrics] = useState([]);
   useEffect(() => {
-    sDData.getMetrics().then((res) => setMetrics(res.metrics));
+    noAuth.getMetrics().then((res) => setMetrics(res.metrics));
   }, []);
 
   // Get the ratings from the database
   const [ratings, setRatings] = useState([]);
   useEffect(() => {
-    sDData.getRatings().then((res) => setRatings(res.ratings));
+    noAuth.getRatings().then((res) => setRatings(res.ratings));
   }, []);
 
   // get all metricRating
   const [metricRating, setMetricRating] = useState([]);
   useEffect(() => {
-    sDData.getMetricRatings().then((res) => setMetricRating(res.metric));
+    noAuth.getMetricRatings().then((res) => setMetricRating(res.metric));
   }, []);
 
   // compare the metricRating with the current carer

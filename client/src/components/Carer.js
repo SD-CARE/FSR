@@ -10,7 +10,7 @@ import ReactTooltip from "react-tooltip";
 function Carer() {
   const [startDate] = useState(new Date());
   const [endDate] = useState(new Date());
-  const { sDData, setCarerDateRange } = useContext(Context);
+  const { noAuth, setCarerDateRange } = useContext(Context);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ function Carer() {
   // GET THE CARER
   const [carer, setCarer] = useState();
   useEffect(() => {
-    sDData
+    noAuth
       .getCarer(id)
       .then((res) => setCarer(res.carers))
       .catch((err) => console.log(err));
@@ -37,7 +37,7 @@ function Carer() {
   // get all carer_clients
   const [carerClients, setCarerClients] = useState();
   useEffect(() => {
-    sDData
+    noAuth
       .getCarerClients()
       .then((res) =>
         setCarerClients(
@@ -48,7 +48,8 @@ function Carer() {
                 (t) =>
                   t.clientID === value.clientID &&
                   t.startDate === value.startDate &&
-                  t.endDate === value.endDate
+                  t.endDate === value.endDate &&
+                  t.carerID === value.carerID
               )
           )
         )
